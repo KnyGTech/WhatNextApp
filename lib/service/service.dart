@@ -6,10 +6,13 @@ import '../models/models.dart';
 class WhatNextClient {
   WhatNextClient({required this.baseUrl, required this.sessionCookie});
 
+  int currentGroup = -1;
   final String baseUrl;
   final String sessionCookie;
 
-  Future<List<Show>> getShows() async {
+  Future<List<Show>> getShows(int groupId) async {
+    if(groupId != currentGroup)
+      await changeGroup(groupId);
     var doc = await getWebpageContent();
     return findShows(doc);
   }
@@ -17,16 +20,27 @@ class WhatNextClient {
   Future<List<Group>> getGroups() async {
     var doc = await getWebpageContent();
     RegExp isActive = RegExp(r's[1-5]1');
-    var i= 1;
+
+    currentGroup = int.parse(doc
+            .querySelectorAll('div.grtab')
+            .where((group) => isActive.hasMatch(group.className))
+            .first
+            .attributes['onclick']
+            ?.split("'")[3] ??
+        '1');
+
     return doc
         .querySelectorAll('div.grtab')
-        .map((tab) => Group(index: i++, title: tab.innerHtml.replaceAll('&nbsp;', ''), isActive: isActive.hasMatch(tab.className)))
+        .map((tab) => Group(
+            index: int.parse(tab.attributes['onclick']?.split("'")[3] ?? '0'),
+            title: tab.innerHtml.replaceAll('&nbsp;', ''),
+            isActive: isActive.hasMatch(tab.className)))
         .take(5)
         .toList();
   }
 
-  changeGroup(index) {
-    http.Client().post(Uri.parse('$baseUrl/call.php?section=koveto'),
+  Future changeGroup(index) async {
+    await http.Client().post(Uri.parse('$baseUrl/call.php?section=koveto'),
         headers: {'Cookie': sessionCookie},
         body: {'do': 'groupvalt', 'mit': index.toString()});
   }

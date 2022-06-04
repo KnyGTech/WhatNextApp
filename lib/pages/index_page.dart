@@ -35,19 +35,16 @@ class _IndexPageState extends State<IndexPage> {
                           [],
                       indicatorColor: Colors.red,
                       unselectedLabelColor: Colors.grey,
-                      onTap: (index) {
-                        _client.changeGroup(index + 1);
-                      },
                     ),
                   ),
                   backgroundColor: Color.fromARGB(255, 65, 65, 65),
-                  body: const TabBarView(
+                  body: TabBarView(
                     children: [
-                      ShowView(),
-                      ShowView(),
-                      ShowView(),
-                      ShowView(),
-                      ShowView(),
+                      ShowView(groupId: 1),
+                      ShowView(groupId: 2),
+                      ShowView(groupId: 3),
+                      ShowView(groupId: 4),
+                      ShowView(groupId: 5),
                     ],
                   ),
                 ));

@@ -4,13 +4,18 @@ import 'package:whatnext_flutter_client/service/service.dart';
 import '../models/show.dart';
 
 class ShowView extends StatefulWidget {
-  const ShowView({Key? key}) : super(key: key);
+  final int? groupId;
+
+  ShowView({Key? key, int? this.groupId}) : super(key: key);
 
   @override
-  State<ShowView> createState() => _ShowViewState();
+  State<ShowView> createState() => _ShowViewState(this.groupId ?? -1);
 }
 
 class _ShowViewState extends State<ShowView> {
+  _ShowViewState(this._groupId);
+
+  final _groupId;
   final _client = WhatNextClient(
       baseUrl: 'https://whatnext.cc',
       sessionCookie:
@@ -20,7 +25,7 @@ class _ShowViewState extends State<ShowView> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<List<Show>>(
-        future: _client.getShows(),
+        future: _client.getShows(_groupId),
         builder: (context, snapshot) {
           if (snapshot.data != null) {
             _shows.clear();
@@ -35,7 +40,10 @@ class _ShowViewState extends State<ShowView> {
                     child: ListTile(
                       dense: true,
                       textColor: Color.fromARGB(255, 192, 192, 192),
-                      leading: Image.network(_shows[i].banner),
+                      leading: Image.network(
+                        _shows[i].banner,
+                        errorBuilder: ((context, error, stackTrace) => Image.asset('assets/images/ikon_placeholder.png'))
+                      ),
                       title: Text(
                         _shows[i].name,
                         style: const TextStyle(
