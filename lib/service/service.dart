@@ -14,11 +14,13 @@ class WhatNextClient {
     return findShows(doc);
   }
 
-  Future<List<String>> getGroups() async {
+  Future<List<Group>> getGroups() async {
     var doc = await getWebpageContent();
+    RegExp isActive = RegExp(r's[1-5]1');
+    var i= 1;
     return doc
         .querySelectorAll('div.grtab')
-        .map((tab) => tab.innerHtml.replaceAll('&nbsp;', ''))
+        .map((tab) => Group(index: i++, title: tab.innerHtml.replaceAll('&nbsp;', ''), isActive: isActive.hasMatch(tab.className)))
         .take(5)
         .toList();
   }

@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="hu.knyihargabor.whatnextclient.whatnext_flutter_client">
    <application
-        android:label="whatnext_flutter_client"
+        android:label="WhatNext"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

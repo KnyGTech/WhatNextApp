@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../models/models.dart';
 import '../service/service.dart';
 import '../views/shows_view.dart';
 
@@ -18,7 +19,7 @@ class _IndexPageState extends State<IndexPage> {
         sessionCookie:
             'userid=25337; loginpass=b27eb252d6c7d8584350b2d7c8e778be');
 
-    return FutureBuilder<List<String>>(
+    return FutureBuilder<List<Group>>(
         future: _client.getGroups(),
         builder: (context, snapshot) {
           if (snapshot.data != null) {
@@ -27,10 +28,11 @@ class _IndexPageState extends State<IndexPage> {
                 length: _groups?.length ?? 0,
                 child: Scaffold(
                   appBar: AppBar(
-                    title: const Text('WhatNext Client'),
+                    title: Image.asset('assets/images/logo.png'),
                     bottom: TabBar(
                       isScrollable: true,
-                      tabs: _groups?.map((e) => Tab(text: e)).toList() ?? [],
+                      tabs: _groups?.map((e) => Tab(text: e.title)).toList() ??
+                          [],
                       indicatorColor: Colors.red,
                       unselectedLabelColor: Colors.grey,
                       onTap: (index) {
@@ -39,13 +41,15 @@ class _IndexPageState extends State<IndexPage> {
                     ),
                   ),
                   backgroundColor: Color.fromARGB(255, 65, 65, 65),
-                  body: const TabBarView(children: [
-                    ShowView(),
-                    ShowView(),
-                    ShowView(),
-                    ShowView(),
-                    ShowView(),
-                  ]),
+                  body: const TabBarView(
+                    children: [
+                      ShowView(),
+                      ShowView(),
+                      ShowView(),
+                      ShowView(),
+                      ShowView(),
+                    ],
+                  ),
                 ));
           } else {
             return const Center(
