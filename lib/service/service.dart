@@ -11,14 +11,23 @@ class WhatNextScraperClient extends WhatNextClient {
   int _currentGroup = -1;
   final String baseUrl;
   final String sessionCookie;
+  Map<int, List<Show>> cache = {};
 
   @override
-  Future<List<Show>> getShows(int groupId) async {
+  Future<List<Show>> getShows(int groupId, {bool force = false}) async {
+    print('Load group: $groupId, force: $force');
+    if (cache.containsKey(groupId) && !force) {
+      return cache[groupId] ?? [];
+    }
+
     if (groupId != _currentGroup) {
       await _changeGroup(groupId);
     }
+
     var doc = await _getWebpageContent();
-    return _findShows(doc);
+    var shows = _findShows(doc);
+    cache[groupId] = shows;
+    return shows;
   }
 
   @override
@@ -48,6 +57,7 @@ class WhatNextScraperClient extends WhatNextClient {
     await http.Client().post(Uri.parse('$baseUrl/call.php?section=koveto'),
         headers: {'Cookie': sessionCookie},
         body: {'do': 'groupvalt', 'mit': index.toString()});
+    _currentGroup = index;
   }
 
   Future<Document> _getWebpageContent() async {
