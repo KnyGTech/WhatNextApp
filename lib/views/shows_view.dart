@@ -53,7 +53,7 @@ class _ShowViewState extends State<ShowView> {
               title: Text(_shows[i].name, style: Theme.of(context).textTheme.titleLarge),
               subtitle: Text(
                   'Évad: ${_shows[i].seasonActual}/${_shows[i].seasonAll}'),
-              onTap: () => _navigateToDetails(),
+              onTap: () => _navigateToDetails(_shows[i].id),
             )));
   }
 
@@ -65,8 +65,8 @@ class _ShowViewState extends State<ShowView> {
     });
   }
 
-  void _navigateToDetails() {
+  void _navigateToDetails(int showId) {
     Navigator.of(context)
-        .push(MaterialPageRoute(builder: (context) => const DetailPage()));
+        .push(MaterialPageRoute(builder: (context) => DetailPage(showId)));
   }
 }

@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:html/dom.dart';
 import 'package:html/parser.dart' as parser;
 import 'package:http/http.dart' as http;
@@ -13,12 +12,13 @@ class WhatNextScraperClient extends WhatNextClient {
   int _currentGroup = -1;
   final String baseUrl;
   final String sessionCookie;
-  Map<int, List<Show>> showsCache = {};
+  Map<int, List<Show>> groupCache = {};
+  Map<int, Show> showCache = {};
 
   @override
   Future<List<Show>> getShows(int groupId, {bool force = false}) async {
-    if (showsCache.containsKey(groupId) && !force) {
-      return showsCache[groupId] ?? [];
+    if (groupCache.containsKey(groupId) && !force) {
+      return groupCache[groupId] ?? [];
     }
 
     if (groupId != _currentGroup) {
@@ -27,8 +27,20 @@ class WhatNextScraperClient extends WhatNextClient {
 
     var doc = await _getWebpageContent();
     var shows = _findShows(doc);
-    showsCache[groupId] = shows;
+    groupCache[groupId] = shows;
+    showCache.addEntries(shows.map(
+      (e) => MapEntry(e.id, e),
+    ));
     return shows;
+  }
+
+  @override
+  Future<Show?> getShow(int showId, {bool force = false}) async {
+    Show? show = showCache[showId];
+    if (show != null) {
+      show.episodes = await getEpisodes(showId);
+    }
+    return show;
   }
 
   @override
@@ -113,6 +125,7 @@ class WhatNextScraperClient extends WhatNextClient {
     return document
         .querySelectorAll("div.kbox")
         .map((item) => Show(
+            groupId: _currentGroup,
             id: int.parse(item.id.split('_')[1]),
             name: item.children[0].attributes['title'] ?? '',
             banner: baseUrl +
