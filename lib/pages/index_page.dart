@@ -31,11 +31,8 @@ class _IndexPageState extends State<IndexPage> {
                       isScrollable: true,
                       tabs:
                           groups?.map((e) => Tab(text: e.title)).toList() ?? [],
-                      indicatorColor: Colors.red,
-                      unselectedLabelColor: Colors.grey,
                     ),
                   ),
-                  backgroundColor: const Color.fromARGB(255, 65, 65, 65),
                   body: const TabBarView(
                     children: [
                       ShowView(1),
@@ -47,13 +44,10 @@ class _IndexPageState extends State<IndexPage> {
                   ),
                 ));
           } else {
-            return const Center(
+            return Center(
                 child: Text(
               'Betöltés...',
-              style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.grey),
+              style: Theme.of(context).textTheme.titleLarge,
             ));
           }
         });

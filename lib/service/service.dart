@@ -1,6 +1,8 @@
+import 'package:flutter/cupertino.dart';
 import 'package:html/dom.dart';
 import 'package:html/parser.dart' as parser;
 import 'package:http/http.dart' as http;
+import 'package:whatnext_flutter_client/models/episode.dart';
 import 'package:whatnext_flutter_client/service/interface.dart';
 import '../models/models.dart';
 
@@ -11,13 +13,12 @@ class WhatNextScraperClient extends WhatNextClient {
   int _currentGroup = -1;
   final String baseUrl;
   final String sessionCookie;
-  Map<int, List<Show>> cache = {};
+  Map<int, List<Show>> showsCache = {};
 
   @override
   Future<List<Show>> getShows(int groupId, {bool force = false}) async {
-    print('Load group: $groupId, force: $force');
-    if (cache.containsKey(groupId) && !force) {
-      return cache[groupId] ?? [];
+    if (showsCache.containsKey(groupId) && !force) {
+      return showsCache[groupId] ?? [];
     }
 
     if (groupId != _currentGroup) {
@@ -26,7 +27,7 @@ class WhatNextScraperClient extends WhatNextClient {
 
     var doc = await _getWebpageContent();
     var shows = _findShows(doc);
-    cache[groupId] = shows;
+    showsCache[groupId] = shows;
     return shows;
   }
 
@@ -51,6 +52,47 @@ class WhatNextScraperClient extends WhatNextClient {
             isActive: isActive.hasMatch(tab.className)))
         .take(5)
         .toList();
+  }
+
+  @override
+  Future<List<Episode>> getEpisodes(int showId, {bool force = false}) async {
+    return [
+      Episode(
+          season: 1,
+          episode: 1,
+          date: DateTime.now(),
+          episodeName: 'Episode 1',
+          showId: showId,
+          seen: true),
+      Episode(
+          season: 1,
+          episode: 2,
+          date: DateTime.now(),
+          episodeName: 'Episode 2',
+          showId: showId,
+          seen: true),
+      Episode(
+          season: 1,
+          episode: 3,
+          date: DateTime.now(),
+          episodeName: 'Episode 3',
+          showId: showId,
+          seen: true),
+      Episode(
+          season: 1,
+          episode: 4,
+          date: DateTime.now(),
+          episodeName: 'Episode 4',
+          showId: showId,
+          seen: false),
+      Episode(
+          season: 1,
+          episode: 5,
+          date: DateTime.now(),
+          episodeName: 'Episode 5',
+          showId: showId,
+          seen: false),
+    ];
   }
 
   Future _changeGroup(index) async {

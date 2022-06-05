@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:whatnext_flutter_client/pages/detail_page.dart';
 import 'package:whatnext_flutter_client/service/interface.dart';
 import '../models/show.dart';
 
@@ -28,10 +29,10 @@ class _ShowViewState extends State<ShowView> {
             _shows.clear();
             _shows.addAll(snapshot.data ?? []);
             return RefreshIndicator(
-                child: _renderListView(), onRefresh: onRefresh);
+                onRefresh: onRefresh, child: _renderListView());
           } else {
             return const Center(
-              child: const RefreshProgressIndicator(),
+              child: RefreshProgressIndicator(),
             );
           }
         });
@@ -42,22 +43,17 @@ class _ShowViewState extends State<ShowView> {
         padding: const EdgeInsets.all(5.0),
         itemCount: _shows.length,
         itemBuilder: (context, i) => Card(
-            color: const Color.fromARGB(255, 40, 40, 40),
             elevation: 3,
             margin: const EdgeInsets.all(5.0),
             child: ListTile(
               dense: true,
-              textColor: const Color.fromARGB(255, 192, 192, 192),
               leading: Image.network(_shows[i].banner,
                   errorBuilder: ((context, error, stackTrace) =>
                       Image.asset('assets/images/ikon_placeholder.png'))),
-              title: Text(
-                _shows[i].name,
-                style:
-                    const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
+              title: Text(_shows[i].name, style: Theme.of(context).textTheme.titleLarge),
               subtitle: Text(
                   'Évad: ${_shows[i].seasonActual}/${_shows[i].seasonAll}'),
+              onTap: () => _navigateToDetails(),
             )));
   }
 
@@ -67,5 +63,10 @@ class _ShowViewState extends State<ShowView> {
       _shows.clear();
       _shows.addAll(shows);
     });
+  }
+
+  void _navigateToDetails() {
+    Navigator.of(context)
+        .push(MaterialPageRoute(builder: (context) => const DetailPage()));
   }
 }

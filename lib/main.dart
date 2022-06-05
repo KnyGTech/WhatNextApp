@@ -34,10 +34,32 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
         title: 'WhatNext Client',
         theme: ThemeData(
-          appBarTheme: const AppBarTheme(
-              backgroundColor: Color.fromARGB(255, 18, 18, 18),
-              foregroundColor: Color.fromARGB(255, 136, 136, 136)),
-        ),
+            appBarTheme: const AppBarTheme(
+                backgroundColor: Color.fromARGB(255, 18, 18, 18),
+                foregroundColor: Color.fromARGB(255, 136, 136, 136)),
+            indicatorColor: Colors.red,
+            backgroundColor: const Color.fromARGB(255, 65, 65, 65),
+            scaffoldBackgroundColor: const Color.fromARGB(255, 65, 65, 65),
+            cardColor: const Color.fromARGB(255, 40, 40, 40),
+            primaryColor: const Color.fromARGB(255, 192, 192, 192),
+            primaryTextTheme: const TextTheme(
+              bodyText1: TextStyle(color: Color.fromARGB(255, 192, 192, 192)),
+            ),
+            textTheme: const TextTheme(
+                titleLarge: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Color.fromARGB(255, 192, 192, 192))),
+            listTileTheme: const ListTileThemeData(
+              textColor: Color.fromARGB(255, 192, 192, 192),
+            ),
+            colorScheme: const ColorScheme.dark(
+              primary: Colors.red
+            ),
+            progressIndicatorTheme:
+                const ProgressIndicatorThemeData(
+                    refreshBackgroundColor: Color.fromARGB(255, 192,192,192),
+                    color: Colors.red)),
         home: const IndexPage());
   }
 }
