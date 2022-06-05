@@ -1,25 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:whatnext_flutter_client/service/service.dart';
-
+import 'package:get_it/get_it.dart';
+import 'package:whatnext_flutter_client/service/interface.dart';
 import '../models/show.dart';
 
 class ShowView extends StatefulWidget {
-  final int? groupId;
+  final int groupId;
 
-  ShowView({Key? key, int? this.groupId}) : super(key: key);
+  const ShowView(this.groupId, {Key? key}) : super(key: key);
 
   @override
-  State<ShowView> createState() => _ShowViewState(this.groupId ?? -1);
+  State<ShowView> createState() => _ShowViewState(groupId);
 }
 
 class _ShowViewState extends State<ShowView> {
   _ShowViewState(this._groupId);
 
-  final _groupId;
-  final _client = WhatNextClient(
-      baseUrl: 'https://whatnext.cc',
-      sessionCookie:
-          'userid=25337; loginpass=b27eb252d6c7d8584350b2d7c8e778be');
+  final WhatNextClient _client = GetIt.I.get<WhatNextClient>();
+  final int _groupId;
   final _shows = <Show>[];
 
   @override
@@ -34,16 +31,16 @@ class _ShowViewState extends State<ShowView> {
                 padding: const EdgeInsets.all(5.0),
                 itemCount: _shows.length,
                 itemBuilder: (context, i) => Card(
-                    color: Color.fromARGB(255, 40, 40, 40),
+                    color: const Color.fromARGB(255, 40, 40, 40),
                     elevation: 3,
                     margin: const EdgeInsets.all(5.0),
                     child: ListTile(
                       dense: true,
-                      textColor: Color.fromARGB(255, 192, 192, 192),
-                      leading: Image.network(
-                        _shows[i].banner,
-                        errorBuilder: ((context, error, stackTrace) => Image.asset('assets/images/ikon_placeholder.png'))
-                      ),
+                      textColor: const Color.fromARGB(255, 192, 192, 192),
+                      leading: Image.network(_shows[i].banner,
+                          errorBuilder: ((context, error, stackTrace) =>
+                              Image.asset(
+                                  'assets/images/ikon_placeholder.png'))),
                       title: Text(
                         _shows[i].name,
                         style: const TextStyle(

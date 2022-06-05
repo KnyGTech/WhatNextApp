@@ -1,27 +1,32 @@
 import 'package:html/dom.dart';
 import 'package:html/parser.dart' as parser;
 import 'package:http/http.dart' as http;
+import 'package:whatnext_flutter_client/service/interface.dart';
 import '../models/models.dart';
 
-class WhatNextClient {
-  WhatNextClient({required this.baseUrl, required this.sessionCookie});
+class WhatNextScraperClient extends WhatNextClient {
+  WhatNextScraperClient({required this.baseUrl, required this.sessionCookie})
+      : super();
 
-  int currentGroup = -1;
+  int _currentGroup = -1;
   final String baseUrl;
   final String sessionCookie;
 
+  @override
   Future<List<Show>> getShows(int groupId) async {
-    if(groupId != currentGroup)
-      await changeGroup(groupId);
-    var doc = await getWebpageContent();
-    return findShows(doc);
+    if (groupId != _currentGroup) {
+      await _changeGroup(groupId);
+    }
+    var doc = await _getWebpageContent();
+    return _findShows(doc);
   }
 
+  @override
   Future<List<Group>> getGroups() async {
-    var doc = await getWebpageContent();
+    var doc = await _getWebpageContent();
     RegExp isActive = RegExp(r's[1-5]1');
 
-    currentGroup = int.parse(doc
+    _currentGroup = int.parse(doc
             .querySelectorAll('div.grtab')
             .where((group) => isActive.hasMatch(group.className))
             .first
@@ -39,20 +44,20 @@ class WhatNextClient {
         .toList();
   }
 
-  Future changeGroup(index) async {
+  Future _changeGroup(index) async {
     await http.Client().post(Uri.parse('$baseUrl/call.php?section=koveto'),
         headers: {'Cookie': sessionCookie},
         body: {'do': 'groupvalt', 'mit': index.toString()});
   }
 
-  Future<Document> getWebpageContent() async {
+  Future<Document> _getWebpageContent() async {
     final response = await http.Client()
         .get(Uri.parse('$baseUrl/koveto'), headers: {'Cookie': sessionCookie});
 
     return parser.parse(response.body);
   }
 
-  List<Show> findShows(Document document) {
+  List<Show> _findShows(Document document) {
     return document
         .querySelectorAll("div.kbox")
         .map((item) => Show(

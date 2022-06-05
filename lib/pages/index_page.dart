@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
+import 'package:whatnext_flutter_client/service/interface.dart';
 
 import '../models/models.dart';
-import '../service/service.dart';
 import '../views/shows_view.dart';
 
 class IndexPage extends StatefulWidget {
@@ -12,39 +13,36 @@ class IndexPage extends StatefulWidget {
 }
 
 class _IndexPageState extends State<IndexPage> {
+  final WhatNextClient client = GetIt.I.get<WhatNextClient>();
+
   @override
   Widget build(BuildContext context) {
-    final _client = WhatNextClient(
-        baseUrl: 'https://whatnext.cc',
-        sessionCookie:
-            'userid=25337; loginpass=b27eb252d6c7d8584350b2d7c8e778be');
-
     return FutureBuilder<List<Group>>(
-        future: _client.getGroups(),
+        future: client.getGroups(),
         builder: (context, snapshot) {
-          if (snapshot.data != null) {
-            var _groups = snapshot.data;
+          if (snapshot.hasData) {
+            var groups = snapshot.data;
             return DefaultTabController(
-                length: _groups?.length ?? 0,
+                length: groups?.length ?? 0,
                 child: Scaffold(
                   appBar: AppBar(
                     title: Image.asset('assets/images/logo.png'),
                     bottom: TabBar(
                       isScrollable: true,
-                      tabs: _groups?.map((e) => Tab(text: e.title)).toList() ??
-                          [],
+                      tabs:
+                          groups?.map((e) => Tab(text: e.title)).toList() ?? [],
                       indicatorColor: Colors.red,
                       unselectedLabelColor: Colors.grey,
                     ),
                   ),
-                  backgroundColor: Color.fromARGB(255, 65, 65, 65),
-                  body: TabBarView(
+                  backgroundColor: const Color.fromARGB(255, 65, 65, 65),
+                  body: const TabBarView(
                     children: [
-                      ShowView(groupId: 1),
-                      ShowView(groupId: 2),
-                      ShowView(groupId: 3),
-                      ShowView(groupId: 4),
-                      ShowView(groupId: 5),
+                      ShowView(1),
+                      ShowView(2),
+                      ShowView(3),
+                      ShowView(4),
+                      ShowView(5),
                     ],
                   ),
                 ));
