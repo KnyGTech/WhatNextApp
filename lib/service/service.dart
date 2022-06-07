@@ -38,7 +38,7 @@ class WhatNextScraperClient extends WhatNextClient {
   Future<Show?> getShow(int showId, {bool force = false}) async {
     Show? show = showCache[showId];
     if (show != null) {
-      show.episodes = await getEpisodes(showId);
+      show.episodes = await getEpisodes(showId, show.seasonActual);
     }
     return show;
   }
@@ -67,44 +67,11 @@ class WhatNextScraperClient extends WhatNextClient {
   }
 
   @override
-  Future<List<Episode>> getEpisodes(int showId, {bool force = false}) async {
-    return [
-      Episode(
-          season: 1,
-          episode: 1,
-          date: DateTime.now(),
-          episodeName: 'Episode 1',
-          showId: showId,
-          seen: true),
-      Episode(
-          season: 1,
-          episode: 2,
-          date: DateTime.now(),
-          episodeName: 'Episode 2',
-          showId: showId,
-          seen: true),
-      Episode(
-          season: 1,
-          episode: 3,
-          date: DateTime.now(),
-          episodeName: 'Episode 3',
-          showId: showId,
-          seen: true),
-      Episode(
-          season: 1,
-          episode: 4,
-          date: DateTime.now(),
-          episodeName: 'Episode 4',
-          showId: showId,
-          seen: false),
-      Episode(
-          season: 1,
-          episode: 5,
-          date: DateTime.now(),
-          episodeName: 'Episode 5',
-          showId: showId,
-          seen: false),
-    ];
+  Future<List<Episode>> getEpisodes(int showId, int season, {bool force = false}) async {
+    await _changeSeason(showId, season);
+    var doc = await _getWebpageContent();
+    var episodes = _findEpisodes(doc);
+    return episodes.where((episode) => episode.showId == showId).toList();
   }
 
   Future _changeGroup(index) async {
@@ -137,5 +104,55 @@ class WhatNextScraperClient extends WhatNextClient {
                     ?.innerHtml ??
                 '')))
         .toList();
+  }
+
+  List<Episode> _findEpisodes(Document document) {
+    return document
+        .querySelectorAll(".ep")
+        .where((item) => !item.className.contains('cntdwn'))
+        .map((item) => Episode(
+            id: int.parse(
+                item.children[0].attributes['onclick']?.split("'")[1] ?? '0'),
+            date: DateTime.tryParse(item.attributes['title']
+                    ?.split(RegExp(r'[\[\]]'))[1]
+                    .replaceAll('.', '-') ??
+                ''),
+            seen: item.attributes['s'] == '1',
+            season: int.parse(item.querySelector('span')?.innerHtml ?? '0'),
+            episode: int.parse(item.children[0].nodes[3].text?.trim() ?? '0'),
+            episodeName: item.querySelector('a.kd')?.attributes['ename'] ?? '',
+            showId: int.parse(item.parent?.id.split('_')[1] ?? '0')))
+        .toList();
+  }
+
+  Future _changeSeason(int showId, int season) async{
+    Show? show = showCache[showId];
+    if (show != null) {
+      await http.Client()
+          .post(Uri.parse('$baseUrl/call.php?section=koveto'), headers: {
+        'Cookie': sessionCookie
+      }, body: {
+        'do': 'render_season',
+        'sid': showId.toString(),
+        'season': season.toString(),
+        'all': show.seasonAll.toString()
+      });
+    }
+    return;
+  }
+
+  @override
+  Future markEpisode(Episode episode) async {
+    await http.Client()
+        .post(Uri.parse('$baseUrl/call.php?section=koveto/jelol'), headers: {
+      'Cookie': sessionCookie
+    }, body: {
+      'do': 'jelol',
+      'mit': 's',
+      'epid': episode.id.toString(),
+      'e': episode.episode.toString().padLeft(2,'0'),
+      's': episode.seen ? '1' : '0',
+      'd': '0'
+    });
   }
 }

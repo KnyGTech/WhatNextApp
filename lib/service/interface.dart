@@ -9,5 +9,7 @@ abstract class WhatNextClient {
 
   Future<Show?> getShow(int showId, {bool force = false});
 
-  Future<List<Episode>> getEpisodes(int showId, {bool force = false});
+  Future<List<Episode>> getEpisodes(int showId,int season, {bool force = false});
+
+  Future markEpisode(Episode episode);
 }
