@@ -48,6 +48,8 @@ class _ShowViewState extends State<ShowView> {
             child: ListTile(
               dense: true,
               leading: Image.network(_shows[i].banner,
+                  width: 130,
+                  loadingBuilder: ((context, child, loadingProgress) => loadingProgress==null ? child : Image.asset('assets/images/ikon_placeholder.png')),
                   errorBuilder: ((context, error, stackTrace) =>
                       Image.asset('assets/images/ikon_placeholder.png'))),
               title: Text(_shows[i].name, style: Theme.of(context).textTheme.titleLarge),

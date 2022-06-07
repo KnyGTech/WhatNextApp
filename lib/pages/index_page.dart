@@ -26,7 +26,7 @@ class _IndexPageState extends State<IndexPage> {
                 length: groups?.length ?? 0,
                 child: Scaffold(
                   appBar: AppBar(
-                    title: Image.asset('assets/images/logo.png'),
+                    title: Image.asset('assets/images/logo.png', height: 40),
                     bottom: TabBar(
                       isScrollable: true,
                       tabs:
@@ -45,10 +45,7 @@ class _IndexPageState extends State<IndexPage> {
                 ));
           } else {
             return Center(
-                child: Text(
-              'Betöltés...',
-              style: Theme.of(context).textTheme.titleLarge,
-            ));
+                child: Image.asset('assets/images/logo.png'));
           }
         });
   }

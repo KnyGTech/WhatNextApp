@@ -22,53 +22,56 @@ class _DetailPageState extends State<DetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(length: 4, child: Scaffold(
-      appBar: AppBar(
-        title: Image.asset('assets/images/logo.png'),
-        bottom: const TabBar(
-            isScrollable: true,
-            tabs: [
+    return DefaultTabController(
+        length: 4,
+        child: Scaffold(
+          appBar: AppBar(
+            title: Image.asset('assets/images/logo.png', height: 40),
+            bottom: const TabBar(isScrollable: true, tabs: [
               Tab(text: 'Season 1'),
               Tab(text: 'Season 2'),
               Tab(text: 'Season 3'),
               Tab(text: 'Season 4')
             ]),
-      ),
-      body: FutureBuilder(
-        future: _client.getShow(_showId),
-        builder: ((builder, snapshot) {
-          if (snapshot.hasData) {
-            var show = snapshot.data as Show;
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Card(child: _renderShow(show)),
-                Expanded(child: TabBarView(children: [
-                  _renderEpisodeList(show.episodes),
-                  _renderEpisodeList(show.episodes),
-                  _renderEpisodeList(show.episodes),
-                  _renderEpisodeList(show.episodes)
-                ]))
-              ],
-            );
-          } else {
-            return const RefreshProgressIndicator();
-          }
-        }),
-      ),
-    ));
+          ),
+          body: FutureBuilder(
+            future: _client.getShow(_showId),
+            builder: ((builder, snapshot) {
+              if (snapshot.hasData) {
+                var show = snapshot.data as Show;
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Card(child: _renderShow(show)),
+                    Expanded(
+                        child: TabBarView(children: [
+                      _renderEpisodeList(show.episodes),
+                      _renderEpisodeList(show.episodes),
+                      _renderEpisodeList(show.episodes),
+                      _renderEpisodeList(show.episodes)
+                    ]))
+                  ],
+                );
+              } else {
+                return const RefreshProgressIndicator();
+              }
+            }),
+          ),
+        ));
   }
 
   Widget _renderShow(Show show) {
     return ListTile(
       dense: true,
       leading: Image.network(show.banner,
+          width: 130,
+          loadingBuilder: ((context, child, loadingProgress) =>
+              loadingProgress == null
+                  ? child
+                  : Image.asset('assets/images/ikon_placeholder.png')),
           errorBuilder: ((context, error, stackTrace) =>
               Image.asset('assets/images/ikon_placeholder.png'))),
-      title: Text(show.name, style: Theme
-          .of(context)
-          .textTheme
-          .titleLarge),
+      title: Text(show.name, style: Theme.of(context).textTheme.titleLarge),
       subtitle: Text('Évad: ${show.seasonActual}/${show.seasonAll}'),
     );
   }
@@ -76,23 +79,17 @@ class _DetailPageState extends State<DetailPage> {
   Widget _renderEpisodeList(List<Episode> episodes) {
     return ListView.builder(
         itemCount: episodes.length,
-        itemBuilder: (context, index) =>
-            Card(
+        itemBuilder: (context, index) => Card(
                 child: ListTile(
-                  title: Text(
-                    episodes[index].episodeName,
-                    style: Theme
-                        .of(context)
-                        .textTheme
-                        .titleLarge,
-                  ),
-                  subtitle: Text(
-                      'S${episodes[index].season.toString().padLeft(
-                          2, '0')}E${episodes[index].episode.toString().padLeft(
-                          2, '0')}'),
-                  trailing: Icon(episodes[index].seen
-                      ? Icons.check_box_rounded
-                      : Icons.square_outlined),
-                )));
+              title: Text(
+                episodes[index].episodeName,
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
+              subtitle: Text(
+                  'S${episodes[index].season.toString().padLeft(2, '0')}E${episodes[index].episode.toString().padLeft(2, '0')}'),
+              trailing: Icon(episodes[index].seen
+                  ? Icons.check_box_rounded
+                  : Icons.square_outlined),
+            )));
   }
 }
