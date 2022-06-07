@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:html/dom.dart';
 import 'package:html/parser.dart' as parser;
 import 'package:http/http.dart' as http;
@@ -14,6 +15,7 @@ class WhatNextScraperClient extends WhatNextClient {
   final String sessionCookie;
   Map<int, List<Show>> groupCache = {};
   Map<int, Show> showCache = {};
+  Map<int, List<Episode>> episodeCache = {};
 
   @override
   Future<List<Show>> getShows(int groupId, {bool force = false}) async {
@@ -27,18 +29,26 @@ class WhatNextScraperClient extends WhatNextClient {
 
     var doc = await _getWebpageContent();
     var shows = _findShows(doc);
+    var episodes = _findEpisodes(doc);
     groupCache[groupId] = shows;
     showCache.addEntries(shows.map(
       (e) => MapEntry(e.id, e),
     ));
+    var episodeGroups = groupBy(
+        episodes, (Episode episode) => episode.showId * 100 + episode.season);
+    episodeCache.addAll(episodeGroups);
     return shows;
   }
 
   @override
   Future<Show?> getShow(int showId, {bool force = false}) async {
     Show? show = showCache[showId];
-    if (show != null) {
-      show.episodes = await getEpisodes(showId, show.seasonActual);
+    if (force) {
+      await _changeGroup(show?.groupId);
+      var doc = await _getWebpageContent();
+      var shows = _findShows(doc);
+      show = shows.where((show) => show.id == showId).first;
+      showCache[showId] = show;
     }
     return show;
   }
@@ -67,11 +77,23 @@ class WhatNextScraperClient extends WhatNextClient {
   }
 
   @override
-  Future<List<Episode>> getEpisodes(int showId, int season, {bool force = false}) async {
-    await _changeSeason(showId, season);
-    var doc = await _getWebpageContent();
-    var episodes = _findEpisodes(doc);
-    return episodes.where((episode) => episode.showId == showId).toList();
+  Future<List<Episode>> getEpisodes(int showId, int season,
+      {bool force = false}) async {
+
+    List<Episode>? showEpisodes = episodeCache[showId * 100 + season];
+
+    if (showEpisodes == null || force) {
+      var show = showCache[showId];
+      await _changeGroup(show?.groupId);
+      await _changeSeason(showId, season);
+      var doc = await _getWebpageContent();
+      var episodes = _findEpisodes(doc);
+      showEpisodes =
+          episodes.where((episode) => episode.showId == showId).toList();
+      episodeCache[showId * 100 + season] = showEpisodes;
+    }
+
+    return showEpisodes;
   }
 
   Future _changeGroup(index) async {
@@ -125,7 +147,7 @@ class WhatNextScraperClient extends WhatNextClient {
         .toList();
   }
 
-  Future _changeSeason(int showId, int season) async{
+  Future _changeSeason(int showId, int season) async {
     Show? show = showCache[showId];
     if (show != null) {
       await http.Client()
@@ -150,7 +172,7 @@ class WhatNextScraperClient extends WhatNextClient {
       'do': 'jelol',
       'mit': 's',
       'epid': episode.id.toString(),
-      'e': episode.episode.toString().padLeft(2,'0'),
+      'e': episode.episode.toString().padLeft(2, '0'),
       's': episode.seen ? '1' : '0',
       'd': '0'
     });

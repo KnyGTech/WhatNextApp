@@ -33,6 +33,7 @@ class MyApp extends StatelessWidget {
 
     return MaterialApp(
         title: 'WhatNext Client',
+        debugShowCheckedModeBanner: false,
         theme: ThemeData(
             appBarTheme: const AppBarTheme(
                 backgroundColor: Color.fromARGB(255, 18, 18, 18),
