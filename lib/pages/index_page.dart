@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import 'package:whatnext_flutter_client/pages/login_page.dart';
-import 'package:whatnext_flutter_client/interfaces/interfaces.dart';
 
+import '../interfaces/interfaces.dart';
 import '../models/models.dart';
 import '../views/shows_view.dart';
+import 'login_page.dart';
 
 class IndexPage extends StatefulWidget {
   const IndexPage({Key? key}) : super(key: key);
@@ -57,6 +57,8 @@ class _IndexPageState extends State<IndexPage> {
                       ShowView(5),
                     ],
                   ),
+                  floatingActionButton: FloatingActionButton(
+                      onPressed: () {}, child: const Icon(Icons.add), ),
                 ));
           } else {
             return const Center(child: RefreshProgressIndicator());
