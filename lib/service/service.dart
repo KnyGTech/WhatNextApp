@@ -2,25 +2,29 @@ import 'package:collection/collection.dart';
 import 'package:html/dom.dart';
 import 'package:html/parser.dart' as parser;
 import 'package:http/http.dart' as http;
-import 'package:whatnext_flutter_client/models/episode.dart';
 import 'package:whatnext_flutter_client/service/interface.dart';
 import '../models/models.dart';
 
 class WhatNextScraperClient extends WhatNextClient {
-  WhatNextScraperClient({required this.baseUrl, required this.sessionCookie})
-      : super();
+  WhatNextScraperClient({required this.baseUrl}) : super();
 
   int _currentGroup = -1;
   final String baseUrl;
-  final String sessionCookie;
-  Map<int, List<Show>> groupCache = {};
-  Map<int, Show> showCache = {};
-  Map<int, List<Episode>> episodeCache = {};
+
+  @override
+  bool get isLoggedIn {
+    return _sessionCookie != "";
+  }
+
+  String _sessionCookie = "";
+  final Map<int, List<Show>> _groupCache = {};
+  final Map<int, Show> _showCache = {};
+  final Map<int, List<Episode>> _episodeCache = {};
 
   @override
   Future<List<Show>> getShows(int groupId, {bool force = false}) async {
-    if (groupCache.containsKey(groupId) && !force) {
-      return groupCache[groupId] ?? [];
+    if (_groupCache.containsKey(groupId) && !force) {
+      return _groupCache[groupId] ?? [];
     }
 
     if (groupId != _currentGroup) {
@@ -30,25 +34,25 @@ class WhatNextScraperClient extends WhatNextClient {
     var doc = await _getWebpageContent();
     var shows = _findShows(doc);
     var episodes = _findEpisodes(doc);
-    groupCache[groupId] = shows;
-    showCache.addEntries(shows.map(
+    _groupCache[groupId] = shows;
+    _showCache.addEntries(shows.map(
       (e) => MapEntry(e.id, e),
     ));
     var episodeGroups = groupBy(
         episodes, (Episode episode) => episode.showId * 100 + episode.season);
-    episodeCache.addAll(episodeGroups);
+    _episodeCache.addAll(episodeGroups);
     return shows;
   }
 
   @override
   Future<Show?> getShow(int showId, {bool force = false}) async {
-    Show? show = showCache[showId];
+    Show? show = _showCache[showId];
     if (force) {
       await _changeGroup(show?.groupId);
       var doc = await _getWebpageContent();
       var shows = _findShows(doc);
       show = shows.where((show) => show.id == showId).first;
-      showCache[showId] = show;
+      _showCache[showId] = show;
     }
     return show;
   }
@@ -79,18 +83,17 @@ class WhatNextScraperClient extends WhatNextClient {
   @override
   Future<List<Episode>> getEpisodes(int showId, int season,
       {bool force = false}) async {
-
-    List<Episode>? showEpisodes = episodeCache[showId * 100 + season];
+    List<Episode>? showEpisodes = _episodeCache[showId * 100 + season];
 
     if (showEpisodes == null || force) {
-      var show = showCache[showId];
+      var show = _showCache[showId];
       await _changeGroup(show?.groupId);
       await _changeSeason(showId, season);
       var doc = await _getWebpageContent();
       var episodes = _findEpisodes(doc);
       showEpisodes =
           episodes.where((episode) => episode.showId == showId).toList();
-      episodeCache[showId * 100 + season] = showEpisodes;
+      _episodeCache[showId * 100 + season] = showEpisodes;
     }
 
     return showEpisodes;
@@ -98,14 +101,14 @@ class WhatNextScraperClient extends WhatNextClient {
 
   Future _changeGroup(index) async {
     await http.Client().post(Uri.parse('$baseUrl/call.php?section=koveto'),
-        headers: {'Cookie': sessionCookie},
+        headers: {'Cookie': _sessionCookie},
         body: {'do': 'groupvalt', 'mit': index.toString()});
     _currentGroup = index;
   }
 
   Future<Document> _getWebpageContent() async {
     final response = await http.Client()
-        .get(Uri.parse('$baseUrl/koveto'), headers: {'Cookie': sessionCookie});
+        .get(Uri.parse('$baseUrl/koveto'), headers: {'Cookie': _sessionCookie});
 
     return parser.parse(response.body);
   }
@@ -148,11 +151,11 @@ class WhatNextScraperClient extends WhatNextClient {
   }
 
   Future _changeSeason(int showId, int season) async {
-    Show? show = showCache[showId];
+    Show? show = _showCache[showId];
     if (show != null) {
       await http.Client()
           .post(Uri.parse('$baseUrl/call.php?section=koveto'), headers: {
-        'Cookie': sessionCookie
+        'Cookie': _sessionCookie
       }, body: {
         'do': 'render_season',
         'sid': showId.toString(),
@@ -167,7 +170,7 @@ class WhatNextScraperClient extends WhatNextClient {
   Future markEpisode(Episode episode) async {
     await http.Client()
         .post(Uri.parse('$baseUrl/call.php?section=koveto/jelol'), headers: {
-      'Cookie': sessionCookie
+      'Cookie': _sessionCookie
     }, body: {
       'do': 'jelol',
       'mit': 's',
@@ -176,5 +179,42 @@ class WhatNextScraperClient extends WhatNextClient {
       's': episode.seen ? '1' : '0',
       'd': '0'
     });
+  }
+
+  @override
+  Future<String> login(String user, String password) async {
+    final response = await http.Client().post(
+        Uri.parse('$baseUrl/call.php?section=index'),
+        body: {'user': user, 'pass': password});
+    if (response.body == "login:1") {
+      final cookies = response.headers['set-cookie'] ?? "";
+      final useridRegExp = RegExp(r'(userid=[0-9]+);');
+      final loginpassRegExp = RegExp(r'(loginpass=[0-9a-z]+);');
+      final userid = useridRegExp.firstMatch(cookies)?.group(1) ?? "";
+      final loginpass = loginpassRegExp.firstMatch(cookies)?.group(1) ?? "";
+      _sessionCookie = '$userid; $loginpass';
+    }
+    return response.body;
+  }
+
+  @override
+  Future? logout() {
+    _sessionCookie = "";
+    _groupCache.clear();
+    _showCache.clear();
+    _episodeCache.clear();
+    _currentGroup = -1;
+    return null;
+  }
+
+  @override
+  void setCredentials(String credentials) {
+    logout();
+    _sessionCookie = credentials;
+  }
+
+  @override
+  String getCredentials() {
+    return _sessionCookie;
   }
 }

@@ -2,26 +2,28 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get_it/get_it.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:whatnext_flutter_client/pages/login_page.dart';
 import 'package:whatnext_flutter_client/service/interface.dart';
 import 'package:whatnext_flutter_client/service/service.dart';
-import 'pages/index_page.dart';
 
-void setup() {
-  var client = WhatNextScraperClient(
-      baseUrl: 'https://whatnext.cc',
-      sessionCookie:
-          'userid=25337; loginpass=b27eb252d6c7d8584350b2d7c8e778be');
+Future<void> setup() async {
+
+  var prefs = await SharedPreferences.getInstance();
+  var client = WhatNextScraperClient(baseUrl: 'https://whatnext.cc');
 
   GetIt.I.registerSingleton<WhatNextClient>(client);
+  GetIt.I.registerSingleton<SharedPreferences>(prefs);
 }
 
 Future<void> main() async {
-  setup();
-  runApp(const MyApp());
+  WidgetsFlutterBinding.ensureInitialized();
+  await setup();
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +40,7 @@ class MyApp extends StatelessWidget {
             appBarTheme: const AppBarTheme(
                 backgroundColor: Color.fromARGB(255, 18, 18, 18),
                 foregroundColor: Color.fromARGB(255, 136, 136, 136)),
-            indicatorColor: Color.fromARGB(255, 19, 119, 149),
+            indicatorColor: const Color.fromARGB(255, 19, 119, 149),
             backgroundColor: const Color.fromARGB(255, 65, 65, 65),
             scaffoldBackgroundColor: const Color.fromARGB(255, 65, 65, 65),
             cardColor: const Color.fromARGB(255, 40, 40, 40),
@@ -55,12 +57,22 @@ class MyApp extends StatelessWidget {
               textColor: Color.fromARGB(255, 192, 192, 192),
             ),
             colorScheme: const ColorScheme.dark(
-              primary: Color.fromARGB(255, 19, 119, 149)
-            ),
-            progressIndicatorTheme:
-                const ProgressIndicatorThemeData(
-                    refreshBackgroundColor: Color.fromARGB(255, 192,192,192),
-                    color: Color.fromARGB(255, 19, 119, 149))),
-        home: const IndexPage());
+                primary: Color.fromARGB(255, 19, 119, 149)),
+            progressIndicatorTheme: const ProgressIndicatorThemeData(
+                refreshBackgroundColor: Color.fromARGB(255, 192, 192, 192),
+                color: Color.fromARGB(255, 19, 119, 149))),
+        home: FutureBuilder(
+          future: Future.delayed(const Duration(seconds: 1), () => true),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              return const LoginPage();
+            }
+            return Scaffold(
+                backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
+                body: Center(
+                  child: Image.asset('assets/images/logo.png'),
+                ));
+          },
+        ));
   }
 }

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:whatnext_flutter_client/pages/login_page.dart';
 import 'package:whatnext_flutter_client/service/interface.dart';
 
 import '../models/models.dart';
@@ -14,6 +16,7 @@ class IndexPage extends StatefulWidget {
 
 class _IndexPageState extends State<IndexPage> {
   final WhatNextClient client = GetIt.I.get<WhatNextClient>();
+  final prefs = GetIt.I.get<SharedPreferences>();
 
   @override
   Widget build(BuildContext context) {
@@ -27,6 +30,21 @@ class _IndexPageState extends State<IndexPage> {
                 child: Scaffold(
                   appBar: AppBar(
                     title: Image.asset('assets/images/logo.png', height: 40),
+                    actions: [
+                      IconButton(
+                          onPressed: () {
+                            client.logout();
+                            prefs.remove('whatnext-credentials');
+                            setState(() {
+                              Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: ((context) =>
+                                          const LoginPage())));
+                            });
+                          },
+                          icon: const Icon(Icons.logout))
+                    ],
                     bottom: TabBar(
                       isScrollable: true,
                       tabs:
@@ -44,8 +62,7 @@ class _IndexPageState extends State<IndexPage> {
                   ),
                 ));
           } else {
-            return Center(
-                child: Image.asset('assets/images/logo.png'));
+            return const Center(child: RefreshProgressIndicator());
           }
         });
   }

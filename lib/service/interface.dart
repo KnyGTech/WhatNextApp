@@ -9,7 +9,20 @@ abstract class WhatNextClient {
 
   Future<Show?> getShow(int showId, {bool force = false});
 
-  Future<List<Episode>> getEpisodes(int showId,int season, {bool force = false});
+  Future<List<Episode>> getEpisodes(int showId, int season,
+      {bool force = false});
 
   Future markEpisode(Episode episode);
+
+  Future<String> login(String user, String password);
+
+  Future? logout();
+
+  void setCredentials(String credentials);
+
+  String getCredentials();
+
+
+
+  bool get isLoggedIn;
 }
