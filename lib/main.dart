@@ -3,27 +3,31 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:whatnext_flutter_client/pages/index_page.dart';
 import 'package:whatnext_flutter_client/pages/login_page.dart';
-import 'package:whatnext_flutter_client/service/interface.dart';
-import 'package:whatnext_flutter_client/service/service.dart';
+import 'package:whatnext_flutter_client/interfaces/interfaces.dart';
+import 'package:whatnext_flutter_client/services/services.dart';
 
-Future<void> setup() async {
-
-  var prefs = await SharedPreferences.getInstance();
-  var client = WhatNextScraperClient(baseUrl: 'https://whatnext.cc');
+Future<bool> setup() async {
+  final prefs = await SharedPreferences.getInstance();
+  final cache = SharedPreferencesCache(prefs);
+  final credentialManager = WhatNextCacheCredentialManager(cache);
+  final client = ScraperWhatNextClient(
+      baseUrl: 'https://whatnext.cc', credentialManager: credentialManager);
 
   GetIt.I.registerSingleton<WhatNextClient>(client);
-  GetIt.I.registerSingleton<SharedPreferences>(prefs);
+  GetIt.I.registerSingleton<Cache>(cache);
+  GetIt.I.registerSingleton<CredentialManager>(credentialManager);
+
+  return true;
 }
 
 Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await setup();
-  runApp(MyApp());
+  runApp(const WhatNextClientApplication());
 }
 
-class MyApp extends StatelessWidget {
-  MyApp({Key? key}) : super(key: key);
+class WhatNextClientApplication extends StatelessWidget {
+  const WhatNextClientApplication({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -62,10 +66,15 @@ class MyApp extends StatelessWidget {
                 refreshBackgroundColor: Color.fromARGB(255, 192, 192, 192),
                 color: Color.fromARGB(255, 19, 119, 149))),
         home: FutureBuilder(
-          future: Future.delayed(const Duration(seconds: 1), () => true),
+          future: setup(),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
-              return const LoginPage();
+              final client = GetIt.I.get<WhatNextClient>();
+              if (client.isLoggedIn) {
+                return const IndexPage();
+              } else {
+                return const LoginPage();
+              }
             }
             return Scaffold(
                 backgroundColor: Theme.of(context).appBarTheme.backgroundColor,

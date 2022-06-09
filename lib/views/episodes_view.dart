@@ -3,7 +3,7 @@ import 'package:get_it/get_it.dart';
 import 'package:intl/intl.dart';
 
 import '../models/episode.dart';
-import '../service/interface.dart';
+import '../interfaces/interfaces.dart';
 
 class EpisodesView extends StatefulWidget {
   final int _showId;

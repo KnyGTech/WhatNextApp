@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:whatnext_flutter_client/service/interface.dart';
+import 'package:whatnext_flutter_client/interfaces/interfaces.dart';
 
 import 'index_page.dart';
 
@@ -17,32 +16,7 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController username = TextEditingController();
   final TextEditingController password = TextEditingController();
   final client = GetIt.I.get<WhatNextClient>();
-  final prefs = GetIt.I.get<SharedPreferences>();
   String error = "";
-
-  @override
-  void initState() {
-    super.initState();
-    loadClientCredentials();
-  }
-
-  void loadClientCredentials() {
-    final String? credentials = prefs.getString('whatnext-credentials');
-    if (credentials != null) {
-      client.setCredentials(credentials);
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        Navigator.pushReplacement(context,
-            MaterialPageRoute(builder: (context) => const IndexPage()));
-      });
-    }
-  }
-
-  void saveClientCredential() {
-    if (client.isLoggedIn) {
-      final credentials = client.getCredentials();
-      prefs.setString('whatnext-credentials', credentials);
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -122,7 +96,6 @@ class _LoginPageState extends State<LoginPage> {
                                         password.clear();
                                       });
                                     } else {
-                                      saveClientCredential();
                                       setState(() {
                                         Navigator.pushReplacement(
                                             context,

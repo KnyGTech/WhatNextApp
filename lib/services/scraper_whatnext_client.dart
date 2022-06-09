@@ -2,14 +2,21 @@ import 'package:collection/collection.dart';
 import 'package:html/dom.dart';
 import 'package:html/parser.dart' as parser;
 import 'package:http/http.dart' as http;
-import 'package:whatnext_flutter_client/service/interface.dart';
-import '../models/models.dart';
+import 'package:whatnext_flutter_client/interfaces/interfaces.dart';
+import 'package:whatnext_flutter_client/models/models.dart';
 
-class WhatNextScraperClient extends WhatNextClient {
-  WhatNextScraperClient({required this.baseUrl}) : super();
+class ScraperWhatNextClient extends WhatNextClient {
+  ScraperWhatNextClient(
+      {required this.baseUrl, required this.credentialManager})
+      : super() {
+    if (credentialManager.hasCredentials()) {
+      _sessionCookie = credentialManager.restore();
+    }
+  }
 
   int _currentGroup = -1;
   final String baseUrl;
+  final CredentialManager credentialManager;
 
   @override
   bool get isLoggedIn {
@@ -193,6 +200,7 @@ class WhatNextScraperClient extends WhatNextClient {
       final userid = useridRegExp.firstMatch(cookies)?.group(1) ?? "";
       final loginpass = loginpassRegExp.firstMatch(cookies)?.group(1) ?? "";
       _sessionCookie = '$userid; $loginpass';
+      credentialManager.save(_sessionCookie);
     }
     return response.body;
   }
@@ -204,17 +212,7 @@ class WhatNextScraperClient extends WhatNextClient {
     _showCache.clear();
     _episodeCache.clear();
     _currentGroup = -1;
+    credentialManager.removeCredentials();
     return null;
-  }
-
-  @override
-  void setCredentials(String credentials) {
-    logout();
-    _sessionCookie = credentials;
-  }
-
-  @override
-  String getCredentials() {
-    return _sessionCookie;
   }
 }

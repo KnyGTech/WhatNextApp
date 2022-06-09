@@ -1,5 +1,3 @@
-import 'package:whatnext_flutter_client/models/episode.dart';
-
 import '../models/models.dart';
 
 abstract class WhatNextClient {
@@ -17,12 +15,6 @@ abstract class WhatNextClient {
   Future<String> login(String user, String password);
 
   Future? logout();
-
-  void setCredentials(String credentials);
-
-  String getCredentials();
-
-
 
   bool get isLoggedIn;
 }

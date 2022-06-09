@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:whatnext_flutter_client/pages/login_page.dart';
-import 'package:whatnext_flutter_client/service/interface.dart';
+import 'package:whatnext_flutter_client/interfaces/interfaces.dart';
 
 import '../models/models.dart';
 import '../views/shows_view.dart';
@@ -16,7 +15,6 @@ class IndexPage extends StatefulWidget {
 
 class _IndexPageState extends State<IndexPage> {
   final WhatNextClient client = GetIt.I.get<WhatNextClient>();
-  final prefs = GetIt.I.get<SharedPreferences>();
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +32,6 @@ class _IndexPageState extends State<IndexPage> {
                       IconButton(
                           onPressed: () {
                             client.logout();
-                            prefs.remove('whatnext-credentials');
                             setState(() {
                               Navigator.pushReplacement(
                                   context,

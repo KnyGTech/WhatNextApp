@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:whatnext_flutter_client/pages/detail_page.dart';
-import 'package:whatnext_flutter_client/service/interface.dart';
+import 'package:whatnext_flutter_client/interfaces/interfaces.dart';
 import '../models/show.dart';
 
 class ShowView extends StatefulWidget {
