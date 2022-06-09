@@ -11,19 +11,17 @@ class DetailPage extends StatefulWidget {
   final int _showId;
 
   @override
-  State<DetailPage> createState() => _DetailPageState(_showId);
+  State<DetailPage> createState() => _DetailPageState();
 }
 
 class _DetailPageState extends State<DetailPage> {
-  _DetailPageState(this._showId);
 
-  final int _showId;
   final WhatNextClient _client = GetIt.I.get<WhatNextClient>();
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: _client.getShow(_showId),
+      future: _client.getShow(widget._showId),
       builder: ((builder, snapshot) {
         if (snapshot.hasData) {
           var show = snapshot.data as Show;

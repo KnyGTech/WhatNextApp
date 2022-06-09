@@ -12,23 +12,18 @@ class EpisodesView extends StatefulWidget {
   const EpisodesView(this._showId, this._season, {Key? key}) : super(key: key);
 
   @override
-  State<EpisodesView> createState() =>
-      _EpisodesViewState(this._showId, this._season);
+  State<EpisodesView> createState() => _EpisodesViewState();
 }
 
 class _EpisodesViewState extends State<EpisodesView> {
   final WhatNextClient _client = GetIt.I.get<WhatNextClient>();
   final DateFormat _dateFormatter = DateFormat('yyyy. MM. dd');
-  final int _showId;
-  final int _season;
   final List<Episode> _episodes = [];
-
-  _EpisodesViewState(this._showId, this._season);
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-        future: _client.getEpisodes(_showId, _season),
+        future: _client.getEpisodes(widget._showId, widget._season),
         builder: ((context, snapshot) {
           if (snapshot.hasData) {
             _episodes.clear();
@@ -82,7 +77,8 @@ class _EpisodesViewState extends State<EpisodesView> {
   }
 
   Future<void> onRefresh() async {
-    final episodes = await _client.getEpisodes(_showId, _season, force: true);
+    final episodes =
+        await _client.getEpisodes(widget._showId, widget._season, force: true);
     setState(() {
       _episodes.clear();
       _episodes.addAll(episodes);
