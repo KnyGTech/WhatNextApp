@@ -9,15 +9,21 @@ import 'package:whatnext_flutter_client/interfaces/interfaces.dart';
 import 'package:whatnext_flutter_client/services/services.dart';
 
 Future<bool> setup() async {
-  final prefs = await SharedPreferences.getInstance();
-  final cache = SharedPreferencesCache(prefs);
-  final credentialManager = WhatNextCacheCredentialManager(cache);
-  final client = ScraperWhatNextClient(
-      baseUrl: 'https://whatnext.cc', credentialManager: credentialManager);
+  final getIt = GetIt.instance;
 
-  GetIt.I.registerSingleton<WhatNextClient>(client);
-  GetIt.I.registerSingleton<Cache>(cache);
-  GetIt.I.registerSingleton<CredentialManager>(credentialManager);
+  if (!getIt.isRegistered<WhatNextClient>() ||
+      !getIt.isRegistered<Cache>() ||
+      !getIt.isRegistered<CredentialManager>()) {
+    final prefs = await SharedPreferences.getInstance();
+    final cache = SharedPreferencesCache(prefs);
+    final credentialManager = WhatNextCacheCredentialManager(cache);
+    final client = ScraperWhatNextClient(
+        baseUrl: 'https://whatnext.cc', credentialManager: credentialManager);
+
+    getIt.registerSingleton<WhatNextClient>(client);
+    getIt.registerSingleton<Cache>(cache);
+    getIt.registerSingleton<CredentialManager>(credentialManager);
+  }
 
   return true;
 }
@@ -66,7 +72,7 @@ class WhatNextClientApplication extends StatelessWidget {
                 refreshBackgroundColor: Color.fromARGB(255, 192, 192, 192),
                 color: Color.fromARGB(255, 19, 119, 149))),
         home: FutureBuilder(
-          future: setup(),
+          future: Future.wait([setup(), Future.delayed(const Duration(seconds: 1), () => true)]),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               final client = GetIt.I.get<WhatNextClient>();
