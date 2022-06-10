@@ -215,4 +215,30 @@ class ScraperWhatNextClient extends WhatNextClient {
     credentialManager.removeCredentials();
     return null;
   }
+
+  @override
+  Future<List<SearchResult>> search(String query) async {
+    var response = await http.Client()
+        .post(Uri.parse('$baseUrl/call.php?section=koveto'), headers: {
+      'Cookie': _sessionCookie
+    }, body: {
+      'do': 'livesearch',
+      'gyorskereso': query,
+    });
+
+    final Document doc = parser.parse(response.body);
+    return doc
+        .querySelectorAll('tr')
+        .map((item) => SearchResult(
+              id: int.parse(item
+                      .querySelector('a[href="#add"]')
+                      ?.attributes['onclick']
+                      ?.split("'")[1] ??
+                  '0'),
+              name: item.querySelector('a[href="#add"]')?.innerHtml ?? '',
+              banner: baseUrl +
+                  (item.querySelector('img')?.attributes['src'] ?? ''),
+            ))
+        .toList();
+  }
 }

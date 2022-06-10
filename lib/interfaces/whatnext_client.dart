@@ -17,4 +17,6 @@ abstract class WhatNextClient {
   Future? logout();
 
   bool get isLoggedIn;
+
+  Future<List<SearchResult>> search(String query);
 }

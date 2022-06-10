@@ -3,6 +3,7 @@ import 'package:get_it/get_it.dart';
 import 'package:whatnext_flutter_client/pages/detail_page.dart';
 import 'package:whatnext_flutter_client/interfaces/interfaces.dart';
 import '../models/show.dart';
+import 'image_banner.dart';
 
 class ShowView extends StatefulWidget {
   final int _groupId;
@@ -44,14 +45,7 @@ class _ShowViewState extends State<ShowView> {
             margin: const EdgeInsets.all(5.0),
             child: ListTile(
               dense: true,
-              leading: Image.network(_shows[i].banner,
-                  width: 130,
-                  loadingBuilder: ((context, child, loadingProgress) =>
-                      loadingProgress == null
-                          ? child
-                          : Image.asset('assets/images/ikon_placeholder.png')),
-                  errorBuilder: ((context, error, stackTrace) =>
-                      Image.asset('assets/images/ikon_placeholder.png'))),
+              leading: ImageBanner(_shows[i].banner),
               title: Text(_shows[i].name,
                   style: Theme.of(context).textTheme.titleLarge),
               subtitle: Text(

@@ -4,6 +4,7 @@ import 'package:whatnext_flutter_client/interfaces/whatnext_client.dart';
 
 import '../models/show.dart';
 import '../views/episodes_view.dart';
+import '../views/image_banner.dart';
 
 class DetailPage extends StatefulWidget {
   const DetailPage(this._showId, {Key? key}) : super(key: key);
@@ -61,14 +62,7 @@ class _DetailPageState extends State<DetailPage> {
   Widget _renderShow(Show show) {
     return ListTile(
       dense: true,
-      leading: Image.network(show.banner,
-          width: 130,
-          loadingBuilder: ((context, child, loadingProgress) =>
-          loadingProgress == null
-              ? child
-              : Image.asset('assets/images/ikon_placeholder.png')),
-          errorBuilder: ((context, error, stackTrace) =>
-              Image.asset('assets/images/ikon_placeholder.png'))),
+      leading: ImageBanner(show.banner),
       title: Text(show.name, style: Theme
           .of(context)
           .textTheme

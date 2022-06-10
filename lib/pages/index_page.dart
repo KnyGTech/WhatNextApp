@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:whatnext_flutter_client/pages/search_page.dart';
 
 import '../interfaces/interfaces.dart';
 import '../models/models.dart';
@@ -58,7 +59,13 @@ class _IndexPageState extends State<IndexPage> {
                     ],
                   ),
                   floatingActionButton: FloatingActionButton(
-                      onPressed: () {}, child: const Icon(Icons.add), ),
+                    onPressed: () {
+                      showDialog(context: context, builder: (context){
+                        return const SearchPage();
+                      });
+                    },
+                    child: const Icon(Icons.add),
+                  ),
                 ));
           } else {
             return const Center(child: RefreshProgressIndicator());
