@@ -29,4 +29,6 @@ abstract class WhatNextClient {
   Future move(int showId, int groupId);
 
   Future renameGroup(int groupId, String newName);
+
+  Future<Profile> getProfile({bool force = false});
 }

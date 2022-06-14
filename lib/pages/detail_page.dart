@@ -92,7 +92,7 @@ class _DetailPageState extends State<DetailPage> {
       isThreeLine: false,
       leading: ImageBanner(show.banner),
       title: Text(show.name,style: Theme.of(context).textTheme.titleLarge),
-      subtitle: Text('${show.genre?.isEmpty == false ? show.genre : 'Stílus nem ismert'} \n${show.statistics} \n${show.status}'),
+      subtitle: Text('${show.genre?.isEmpty == false ? show.genre : 'Stílus nem ismert'} \n${show.statistics?.isEmpty == false ? show.statistics : 'Statisztika nem ismert'} \n${show.status?.isEmpty == false ? show.status : 'Státusz nem ismert'}'),
     );
   }
 }

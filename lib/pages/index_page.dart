@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:event/event.dart';
 import 'package:get_it/get_it.dart';
 import 'package:whatnext_flutter_client/events/new_show_added_event.dart';
+import 'package:whatnext_flutter_client/pages/profile_page.dart';
 import 'package:whatnext_flutter_client/pages/search_page.dart';
 
 import '../interfaces/interfaces.dart';
@@ -37,6 +38,12 @@ class _IndexPageState extends State<IndexPage> {
                             title: Image.asset('assets/images/logo.png',
                                 height: 40),
                             actions: [
+                              IconButton(
+                                onPressed: (){
+                                  Navigator.of(context).push(MaterialPageRoute(builder: (context) => const ProfilePage()));
+                                },
+                                icon: const Icon(Icons.person),
+                              ),
                               IconButton(
                                   onPressed: () async {
                                     final tabIndex =
@@ -127,6 +134,9 @@ class _IndexPageState extends State<IndexPage> {
                                   context: context,
                                   builder: (context) {
                                     return AlertDialog(
+                                      contentPadding: const EdgeInsets.fromLTRB(24, 24, 24, 0),
+                                      buttonPadding: EdgeInsets.zero,
+                                      actionsPadding: const EdgeInsets.fromLTRB(8,0,8,8),
                                       title:
                                           const Text("Új sorozat hozzáadása"),
                                       content: SearchPage(tabIndex + 1),

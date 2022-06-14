@@ -30,9 +30,9 @@ class _SearchPageState extends State<SearchPage> {
         TextFormField(
             decoration: const InputDecoration(hintText: "Keresés..."),
             onChanged: _onSearchChanged),
-        const SizedBox(height: 7),
+        const SizedBox(height: 3),
         Text(_error, style: ApplicationTheme.errorTextTheme),
-        const SizedBox(height: 7),
+        const SizedBox(height: 3),
         Expanded(
             child: SizedBox(
                 width: 300,

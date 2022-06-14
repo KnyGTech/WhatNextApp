@@ -27,6 +27,7 @@ class ScraperWhatNextClient extends WhatNextClient {
   final Map<int, List<Show>> _groupCache = {};
   final Map<int, Show> _showCache = {};
   final Map<int, List<Episode>> _episodeCache = {};
+  Profile? _profileCache;
 
   @override
   Future<List<Show>> getShows(int groupId, {bool force = false}) async {
@@ -198,7 +199,7 @@ class ScraperWhatNextClient extends WhatNextClient {
 
     var document = parser.parse(response.body);
     show.cover = document.querySelector('img')?.attributes['src'];
-    show.statistics = document.querySelector('span.sstat')?.innerHtml;
+    show.statistics = document.querySelector('span.sstat')?.innerHtml.trim();
   }
 
   @override
@@ -326,5 +327,81 @@ class ScraperWhatNextClient extends WhatNextClient {
     await http.Client().post(Uri.parse('$baseUrl/call.php?section=koveto'),
         headers: {'Cookie': _sessionCookie},
         body: {'do': 'rename', 'mit': 'grname$groupId', 'mire': newName});
+  }
+
+  @override
+  Future<Profile> getProfile({bool force = false}) async {
+    if (_profileCache == null || force) {
+      var profileResult = await http.Client().get(
+          Uri.parse('$baseUrl/felhasznalo'),
+          headers: {'Cookie': _sessionCookie});
+      var profileDocument = parser.parse(profileResult.body);
+
+      var statResult = await http.Client().get(
+          Uri.parse('$baseUrl/statisztika'),
+          headers: {'Cookie': _sessionCookie});
+      var statDocument = parser.parse(statResult.body);
+
+      var settingsResult = await http.Client().get(
+          Uri.parse('$baseUrl/beallitasok'),
+          headers: {'Cookie': _sessionCookie});
+      var settingsDocument = parser.parse(settingsResult.body);
+
+      _profileCache = Profile(
+          name: profileDocument
+                  .querySelector('div#usr3')
+                  ?.children[0]
+                  .innerHtml ??
+              '',
+          email: settingsDocument
+                  .querySelectorAll('table.config')[2]
+                  .querySelectorAll('td')[5]
+                  .innerHtml ??
+              '',
+          avatar: baseUrl +
+              (profileDocument.querySelector('img.av')?.attributes['src'] ??
+                  ''),
+          statistics:
+              statDocument.querySelectorAll('span.big-text')[1].innerHtml ?? '',
+          shows: await _getAllShow(),
+          activities: profileDocument
+              .querySelectorAll('div.x34 table tr')
+              .map((item) => Activity(
+                  show: item.children[1].innerHtml.trim(),
+                  episode:
+                      '${item.children[3].innerHtml.trim()}: ${item.children[2].innerHtml.trim()}',
+                  time: item.children[4].innerHtml.trim(),
+                  banner: baseUrl +
+                      (item.querySelector('img')?.attributes['src'] ?? '')))
+              .toList());
+    }
+    return _profileCache!;
+  }
+
+  Future<List<String>> _getAllShow() async {
+    final List<String> shows = [];
+
+    var result = await http.Client().get(Uri.parse('$baseUrl/felhasznalo'),
+        headers: {'Cookie': _sessionCookie});
+    var document = parser.parse(result.body);
+
+    shows.addAll(document
+        .querySelectorAll('div.listikon img')
+        .map((item) => baseUrl + (item.attributes['src'] ?? '')));
+
+    if (document.querySelector('div#owns') != null) {
+      var userID =
+          document.querySelectorAll('table.config td').last.innerHtml.trim();
+      var moreResult = await http.Client().post(
+          Uri.parse('$baseUrl/call.php?section=profile'),
+          headers: {'Cookie': _sessionCookie},
+          body: {'do': 'getall', 'sessionid': userID});
+      var moreDocument = parser.parse(moreResult.body);
+
+      shows.addAll(moreDocument
+          .querySelectorAll('img')
+          .map((item) => baseUrl + (item.attributes['src'] ?? '')));
+    }
+    return shows;
   }
 }
