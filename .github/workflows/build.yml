@@ -28,7 +28,8 @@ jobs:
         KEY_JKS: ${{ secrets.KEY_JKS }}
         KEY_PASSWORD: ${{ secrets.ALIAS_PASSWORD }}
         ALIAS_PASSWORD: ${{ secrets.KEY_PASSWORD }}
-      run: echo $KEY_JKS > android/key.jks
+    - run: pwd && echo $KEY_JKS
+    - run: echo $KEY_JKS > android/key.jks
     - run: cat android/key.jks
     - run: flutter pub get
     - run: flutter build apk --release --build-name ${{ steps.get_version.outputs.VERSION }}
