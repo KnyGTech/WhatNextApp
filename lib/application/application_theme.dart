@@ -8,6 +8,9 @@ class ApplicationTheme {
   static Color appColorDarkerGray = const Color.fromARGB(255, 19, 19, 19);
   static Color appColorBlue = const Color.fromARGB(255, 19, 119, 149);
 
+  static TextStyle errorTextTheme =
+      const TextStyle(fontSize: 14, color: Colors.red);
+
   static ThemeData primaryTheme = ThemeData(
       appBarTheme: AppBarTheme(
           backgroundColor: appColorDarkerGray,

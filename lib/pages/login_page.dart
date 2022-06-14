@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:whatnext_flutter_client/interfaces/interfaces.dart';
 
+import '../application/application_theme.dart';
 import 'index_page.dart';
 
 class LoginPage extends StatefulWidget {
@@ -36,8 +37,7 @@ class _LoginPageState extends State<LoginPage> {
                   ?.copyWith(fontSize: 24),
             ),
             const SizedBox(height: 10),
-            Text(error,
-                style: const TextStyle(fontSize: 14, color: Colors.red)),
+            Text(error, style: ApplicationTheme.errorTextTheme),
             const SizedBox(height: 25),
             Padding(
                 padding: const EdgeInsets.all(25),

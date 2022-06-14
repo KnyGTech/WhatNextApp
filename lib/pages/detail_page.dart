@@ -16,7 +16,6 @@ class DetailPage extends StatefulWidget {
 }
 
 class _DetailPageState extends State<DetailPage> {
-
   final WhatNextClient _client = GetIt.I.get<WhatNextClient>();
 
   @override
@@ -32,18 +31,19 @@ class _DetailPageState extends State<DetailPage> {
               child: Scaffold(
                 appBar: AppBar(
                   title: Image.asset('assets/images/logo.png', height: 40),
-                  bottom: TabBar(isScrollable: true,
-                      tabs: List<Tab>.generate(show.seasonAll, (index) =>
-                          Tab(text: '${index + 1}. évad'))),
+                  bottom: TabBar(
+                      isScrollable: true,
+                      tabs: List<Tab>.generate(show.seasonAll,
+                          (index) => Tab(text: '${index + 1}. évad'))),
                 ),
                 body: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     Card(child: _renderShow(show)),
                     Expanded(
-                        child: TabBarView(children: List<Widget>.generate(
-                            show.seasonAll, (index) =>
-                            EpisodesView(show.id, index + 1))))
+                        child: TabBarView(
+                            children: List<Widget>.generate(show.seasonAll,
+                                (index) => EpisodesView(show.id, index + 1))))
                   ],
                 ),
               ));
@@ -60,14 +60,39 @@ class _DetailPageState extends State<DetailPage> {
   }
 
   Widget _renderShow(Show show) {
+    var p = Padding(
+        padding: const EdgeInsets.all(15.0),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Image.network(show.cover ?? '',
+                width: 130,
+                loadingBuilder: ((context, child, loadingProgress) =>
+                    loadingProgress == null
+                        ? child
+                        : Image.asset('assets/images/ikon_placeholder.png')),
+                errorBuilder: ((context, error, stackTrace) =>
+                    Image.asset('assets/images/ikon_placeholder.png'))),
+            const SizedBox(width: 15),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(show.name, style: Theme.of(context).textTheme.titleLarge),
+                Text(show.hungarianTitle ?? ''),
+                Text(show.genre ?? ''),
+                const SizedBox(height: 15),
+                Text('${show.seasonAll} évad'),
+                Text(show.status ?? ''),
+              ],
+            )
+          ],
+        ));
+
     return ListTile(
-      dense: true,
+      isThreeLine: false,
       leading: ImageBanner(show.banner),
-      title: Text(show.name, style: Theme
-          .of(context)
-          .textTheme
-          .titleLarge),
-      subtitle: Text('Évad: ${show.seasonActual}/${show.seasonAll}'),
+      title: Text(show.name,style: Theme.of(context).textTheme.titleLarge),
+      subtitle: Text('${show.genre?.isEmpty == false ? show.genre : 'Stílus nem ismert'} \n${show.statistics} \n${show.status}'),
     );
   }
 }

@@ -19,4 +19,14 @@ abstract class WhatNextClient {
   bool get isLoggedIn;
 
   Future<List<SearchResult>> search(String query);
+
+  Future<String> addShow(int showId, int groupId);
+
+  Future<String> removeShow(int showId);
+
+  Future reorder(List<int> showIds, int groupId);
+
+  Future move(int showId, int groupId);
+
+  Future renameGroup(int groupId, String newName);
 }

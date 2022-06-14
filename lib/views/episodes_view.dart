@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:intl/intl.dart';
+import 'package:whatnext_flutter_client/application/application_theme.dart';
 
 import '../models/episode.dart';
 import '../interfaces/interfaces.dart';
@@ -45,9 +46,15 @@ class _EpisodesViewState extends State<EpisodesView> {
                   _episodes[index].episodeName,
                   style: Theme.of(context).textTheme.titleLarge,
                 ),
-                subtitle: Text(_episodes[index].date != null
-                    ? _dateFormatter.format(_episodes[index].date!)
-                    : 'Nem ismert'),
+                subtitle: Text(
+                    _episodes[index].date != null
+                        ? _dateFormatter.format(_episodes[index].date!) + (_episodes[index].date!.isAfter(DateTime.now()) ? ' (${_episodes[index].date!.difference(DateTime.now()).inDays} nap)' : '')
+                        : 'Nem ismert',
+                    style: _episodes[index].date != null
+                        ? (_episodes[index].date!.isAfter(DateTime.now())
+                            ? TextStyle(color: ApplicationTheme.appColorBlue)
+                            : null)
+                        : null),
                 leading: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -57,7 +64,7 @@ class _EpisodesViewState extends State<EpisodesView> {
                           style: Theme.of(context)
                               .textTheme
                               .titleLarge
-                              ?.copyWith(color: Colors.blueGrey)),
+                              ?.copyWith(color: ApplicationTheme.appColorBlue)),
                       Text(
                           'E${_episodes[index].episode.toString().padLeft(2, '0')}',
                           style: Theme.of(context).textTheme.titleLarge),

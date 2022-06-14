@@ -61,6 +61,7 @@ class ScraperWhatNextClient extends WhatNextClient {
       show = shows.where((show) => show.id == showId).first;
       _showCache[showId] = show;
     }
+    await _getShowDetails(showId);
     return show;
   }
 
@@ -102,11 +103,11 @@ class ScraperWhatNextClient extends WhatNextClient {
           episodes.where((episode) => episode.showId == showId).toList();
       _episodeCache[showId * 100 + season] = showEpisodes;
     }
-
     return showEpisodes;
   }
 
   Future _changeGroup(index) async {
+    if (_currentGroup == index) return;
     await http.Client().post(Uri.parse('$baseUrl/call.php?section=koveto'),
         headers: {'Cookie': _sessionCookie},
         body: {'do': 'groupvalt', 'mit': index.toString()});
@@ -171,6 +172,33 @@ class ScraperWhatNextClient extends WhatNextClient {
       });
     }
     return;
+  }
+
+  Future _getShowDetails(int showId) async {
+    Show? show = _showCache[showId];
+    if (show != null) {
+      final response = await http.Client().get(
+          Uri.parse('$baseUrl/sorozatok/?sid=$showId'),
+          headers: {'Cookie': _sessionCookie});
+
+      var document = parser.parse(response.body);
+      show.hungarianTitle = document.querySelector('span.sbox_txt')?.innerHtml;
+      var sbox = document.querySelector('div.sbox_content');
+      show.status = sbox?.nodes[sbox.nodes.length - 1].text?.trim();
+      show.genre = sbox?.nodes[sbox.nodes.length - 3].text?.trim();
+      await _getShowCoverAndStat(show);
+    }
+  }
+
+  Future<String?> _getShowCoverAndStat(Show show) async {
+    final response = await http.Client().post(
+        Uri.parse('$baseUrl/call.php?section=sorozatok'),
+        headers: {'Cookie': _sessionCookie},
+        body: {'menu': 'm1', 'sid': show.id.toString()});
+
+    var document = parser.parse(response.body);
+    show.cover = document.querySelector('img')?.attributes['src'];
+    show.statistics = document.querySelector('span.sstat')?.innerHtml;
   }
 
   @override
@@ -240,5 +268,63 @@ class ScraperWhatNextClient extends WhatNextClient {
                   (item.querySelector('img')?.attributes['src'] ?? ''),
             ))
         .toList();
+  }
+
+  @override
+  Future<String> addShow(int showId, int groupId) async {
+    await _changeGroup(groupId);
+    var response = await http.Client()
+        .post(Uri.parse('$baseUrl/call.php?section=koveto'), headers: {
+      'Cookie': _sessionCookie
+    }, body: {
+      'do': 'addserie',
+      'sid': showId.toString(),
+    });
+    return response.body.replaceAll('<br>', '');
+  }
+
+  @override
+  Future<String> removeShow(int showId) async {
+    var response = await http.Client()
+        .post(Uri.parse('$baseUrl/call.php?section=koveto'), headers: {
+      'Cookie': _sessionCookie
+    }, body: {
+      'do': 'removeserie',
+      'sid': showId.toString(),
+    });
+    return response.body;
+  }
+
+  @override
+  Future reorder(List<int> showIds, int groupId) async {
+    var body = {
+      'do': 'sortable',
+      'group': groupId.toString(),
+    };
+
+    for (int i = 0; i < showIds.length; i++) {
+      body['id[$i]'] = showIds[i].toString();
+    }
+
+    await http.Client().post(Uri.parse('$baseUrl/call.php?section=koveto'),
+        headers: {'Cookie': _sessionCookie}, body: body);
+  }
+
+  @override
+  Future move(int showId, int groupId) async {
+    var shows =
+        (await getShows(groupId, force: true)).map((show) => show.id).toList();
+    shows.insert(0, showId);
+
+    await reorder(shows, groupId);
+
+    await getShows(groupId, force: true);
+  }
+
+  @override
+  Future renameGroup(int groupId, String newName) async {
+    await http.Client().post(Uri.parse('$baseUrl/call.php?section=koveto'),
+        headers: {'Cookie': _sessionCookie},
+        body: {'do': 'rename', 'mit': 'grname$groupId', 'mire': newName});
   }
 }

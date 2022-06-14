@@ -15,5 +15,13 @@ class Show {
   String banner;
   int seasonActual;
   int seasonAll;
+
+  String? hungarianTitle;
+  String? genre;
+  String? status;
+  String? cover;
+  String? statistics;
+
+
   List<Episode> episodes = [];
 }
