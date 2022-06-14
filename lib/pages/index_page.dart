@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:event/event.dart';
 import 'package:get_it/get_it.dart';
 import 'package:whatnext_flutter_client/events/new_show_added_event.dart';
 import 'package:whatnext_flutter_client/pages/profile_page.dart';

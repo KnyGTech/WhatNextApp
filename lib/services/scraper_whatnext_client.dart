@@ -191,7 +191,7 @@ class ScraperWhatNextClient extends WhatNextClient {
     }
   }
 
-  Future<String?> _getShowCoverAndStat(Show show) async {
+  Future _getShowCoverAndStat(Show show) async {
     final response = await http.Client().post(
         Uri.parse('$baseUrl/call.php?section=sorozatok'),
         headers: {'Cookie': _sessionCookie},
@@ -354,15 +354,14 @@ class ScraperWhatNextClient extends WhatNextClient {
                   .innerHtml ??
               '',
           email: settingsDocument
-                  .querySelectorAll('table.config')[2]
-                  .querySelectorAll('td')[5]
-                  .innerHtml ??
-              '',
+              .querySelectorAll('table.config')[2]
+              .querySelectorAll('td')[5]
+              .innerHtml,
           avatar: baseUrl +
               (profileDocument.querySelector('img.av')?.attributes['src'] ??
                   ''),
           statistics:
-              statDocument.querySelectorAll('span.big-text')[1].innerHtml ?? '',
+              statDocument.querySelectorAll('span.big-text')[1].innerHtml,
           shows: await _getAllShow(),
           activities: profileDocument
               .querySelectorAll('div.x34 table tr')

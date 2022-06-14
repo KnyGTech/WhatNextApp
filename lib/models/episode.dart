@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 class Episode {
   Episode(
       {required this.id,

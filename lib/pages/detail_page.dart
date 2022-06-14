@@ -60,34 +60,6 @@ class _DetailPageState extends State<DetailPage> {
   }
 
   Widget _renderShow(Show show) {
-    var p = Padding(
-        padding: const EdgeInsets.all(15.0),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Image.network(show.cover ?? '',
-                width: 130,
-                loadingBuilder: ((context, child, loadingProgress) =>
-                    loadingProgress == null
-                        ? child
-                        : Image.asset('assets/images/ikon_placeholder.png')),
-                errorBuilder: ((context, error, stackTrace) =>
-                    Image.asset('assets/images/ikon_placeholder.png'))),
-            const SizedBox(width: 15),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(show.name, style: Theme.of(context).textTheme.titleLarge),
-                Text(show.hungarianTitle ?? ''),
-                Text(show.genre ?? ''),
-                const SizedBox(height: 15),
-                Text('${show.seasonAll} évad'),
-                Text(show.status ?? ''),
-              ],
-            )
-          ],
-        ));
-
     return ListTile(
       isThreeLine: false,
       leading: ImageBanner(show.banner),
