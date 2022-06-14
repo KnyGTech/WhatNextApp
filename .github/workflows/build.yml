@@ -24,8 +24,6 @@ jobs:
         flutter-version: '3.0.2'
     - run: flutter pub get
     - run: flutter build apk
-    - uses: SierraSoftworks/gh-releases@v1.0.4
+    - uses: softprops/action-gh-release@v1
       with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-        overwrite: 'true'
         files: build\app\outputs\flutter-apk\app-release.apk
