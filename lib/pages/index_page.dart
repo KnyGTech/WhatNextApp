@@ -118,7 +118,7 @@ class _IndexPageState extends State<IndexPage> {
                             bottom: TabBar(
                               isScrollable: true,
                               tabs: _groups
-                                  .map((e) => Tab(text: e.title))
+                                  .map((e) => Tab(text: e.title.isEmpty ? "#" : e.title))
                                   .toList(),
                             ),
                           ),

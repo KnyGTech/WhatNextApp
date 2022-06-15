@@ -31,4 +31,6 @@ abstract class WhatNextClient {
   Future renameGroup(int groupId, String newName);
 
   Future<Profile> getProfile({bool force = false});
+
+  String getRegisterLink();
 }
