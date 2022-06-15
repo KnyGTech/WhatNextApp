@@ -28,7 +28,7 @@ jobs:
       - name: Export secrets
         run: |
           echo $KEY_JKS | base64 -i -d > android/key.jks
-          echo $UPDATER_CONFIG > assets/secrets/updater.json
+          mkdir assets/secrets && echo $UPDATER_CONFIG > assets/secrets/updater.json
         env:
           KEY_JKS: ${{ secrets.KEY_JKS }}
           UPDATER_CONFIG: ${{ secrets.UPDATER_CONFIG }}
