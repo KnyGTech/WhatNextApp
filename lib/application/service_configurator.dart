@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:whatnext_flutter_client/events/new_show_added_event.dart';
@@ -17,9 +20,12 @@ class ServiceConfigurator {
       final credentialManager = WhatNextCacheCredentialManager(cache);
       final client = ScraperWhatNextClient(
           baseUrl: 'https://whatnext.cc', credentialManager: credentialManager);
+
+      final String response = await rootBundle.loadString('assets/secrets/updater.json');
+      final updaterConfig = await jsonDecode(response);
       final updater = GithubReleaseAutoUpdater(cache,
-          repoUrl: "KisGaben/WhatnextFlutterClient",
-          accessToken: "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");
+          repoUrl: updaterConfig['repoUrl'],
+          accessToken: updaterConfig['accessToken']);
       await updater.checkForUpdate();
 
       try {
