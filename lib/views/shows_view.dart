@@ -87,16 +87,17 @@ class _ShowViewState extends State<ShowView> {
                   'Évad: ${_shows[i].seasonActual}/${_shows[i].seasonAll}'),
               onTap: () => _navigateToDetails(_shows[i].id),
               trailing: PopupMenuButton(
+                icon: Icon(Icons.more_vert, color: ApplicationTheme.appColorLighterGrey),
                   itemBuilder: (context) => [
                         PopupMenuItem(
-                          child: const Text('Törlés'),
+                          child: Text('Törlés', style: Theme.of(context).textTheme.titleLarge),
                           onTap: () async {
                             await _client.removeShow(_shows[i].id);
                             refresh();
                           },
                         ),
                         PopupMenuItem(
-                          child: const Text('Áthelyezés'),
+                          child: Text('Áthelyezés', style: Theme.of(context).textTheme.titleLarge),
                           onTap: () async {
                             var groups = (await _client.getGroups()).where(
                                 (Group group) =>

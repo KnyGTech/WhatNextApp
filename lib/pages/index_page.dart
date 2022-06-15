@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:whatnext_flutter_client/application/application_theme.dart';
 import 'package:whatnext_flutter_client/events/new_show_added_event.dart';
 import 'package:whatnext_flutter_client/pages/profile_page.dart';
 import 'package:whatnext_flutter_client/pages/search_page.dart';
@@ -59,6 +60,7 @@ class _IndexPageState extends State<IndexPage> {
                                               content: Form(
                                                   key: formKey,
                                                   child: TextFormField(
+                                                    style: TextStyle(color: ApplicationTheme.appColorLighterGrey),
                                                     decoration:
                                                         const InputDecoration(
                                                             hintText: "Új név"),
