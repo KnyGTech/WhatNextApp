@@ -98,19 +98,42 @@ class _ShowViewState extends State<ShowView> {
                         PopupMenuItem(
                           child: const Text('Áthelyezés'),
                           onTap: () async {
-                            var groups = (await _client.getGroups()).where((Group group) => group.index != widget._groupId);
+                            var groups = (await _client.getGroups()).where(
+                                (Group group) =>
+                                    group.index != widget._groupId);
 
-                            WidgetsBinding.instance.addPostFrameCallback((_) async {
-                              var result = await showDialog(context: context, builder: (context) => SimpleDialog(
-                                title: const Text("Áthelyezés másik lapra"),
-                                children: groups.map((group) => SimpleDialogOption(
-                                  onPressed: () {Navigator.pop(context, group.index);},
-                                  child: Text(group.title),
-                                )).toList(),
-                              ));
+                            WidgetsBinding.instance
+                                .addPostFrameCallback((_) async {
+                              var result = await showDialog(
+                                  context: context,
+                                  builder: (context) => SimpleDialog(
+                                        title: const Text(
+                                            "Áthelyezés másik lapra"),
+                                        children: groups
+                                            .map((group) => SimpleDialogOption(
+                                                  padding: const EdgeInsets
+                                                          .symmetric(
+                                                      vertical: 16.0,
+                                                      horizontal: 24.0),
+                                                  onPressed: () {
+                                                    Navigator.pop(
+                                                        context, group.index);
+                                                  },
+                                                  child: Text(group.title,
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .titleLarge!
+                                                          .copyWith(
+                                                              color: ApplicationTheme
+                                                                  .appColorBlue,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .normal)),
+                                                ))
+                                            .toList(),
+                                      ));
                               await _client.move(_shows[i].id, result);
                               refresh();
-                              // newShowAddedEvent.broadcast(NewShowAddedEventArgs(result));
                             });
                           },
                         )
