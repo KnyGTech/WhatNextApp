@@ -42,7 +42,10 @@ class Application extends StatelessWidget {
                       builder: (context) => AlertDialog(
                             title: const Text('Új verzió érhető el'),
                             content: Text(
-                                'Szeretné frissíteni a(z) ${updater.latestVersion} verzióra? Az aktuális verzió a(z) ${updater.currentVersion}!'),
+                                'Szeretné frissíteni a(z) ${updater.latestVersion} verzióra? Az aktuális verzió a(z) ${updater.currentVersion}!',
+                                style: TextStyle(
+                                    color:
+                                        ApplicationTheme.appColorLighterGrey)),
                             actions: [
                               TextButton(
                                   onPressed: () {
@@ -58,12 +61,18 @@ class Application extends StatelessWidget {
                                   onPressed: () {
                                     Navigator.pop(context, true);
                                   },
-                                  child: const Text("Frissítés"))
+                                  child: Text("Frissítés",
+                                      style: TextStyle(
+                                          color: ApplicationTheme
+                                              .appColorLighterGrey)))
                             ],
                           ));
                   if (result != null) {
                     if (result) {
-                      var permissions = await [Permission.storage, Permission.requestInstallPackages].request();
+                      var permissions = await [
+                        Permission.storage,
+                        Permission.requestInstallPackages
+                      ].request();
                       if (permissions[Permission.storage]!.isGranted) {
                         var downloaded = await showDialog(
                             barrierDismissible: false,
@@ -80,13 +89,19 @@ class Application extends StatelessWidget {
                                         if (result.isEmpty) {
                                           return Center(
                                               child: Column(children: [
-                                            const Text(
-                                                "Hiba történt a frissítés letöltése közben!"),
+                                            Text(
+                                                "Hiba történt a frissítés letöltése közben!",
+                                                style: TextStyle(
+                                                    color: ApplicationTheme
+                                                        .appColorLighterGrey)),
                                             ElevatedButton(
                                                 onPressed: () {
                                                   Navigator.pop(context);
                                                 },
-                                                child: const Text("Bezárás"))
+                                                child: Text("Bezárás",
+                                                    style: TextStyle(
+                                                        color: ApplicationTheme
+                                                            .appColorLighterGrey)))
                                           ]));
                                         } else {
                                           return Center(
@@ -95,8 +110,10 @@ class Application extends StatelessWidget {
                                                     Navigator.pop(
                                                         context, result);
                                                   },
-                                                  child:
-                                                      const Text("Telepítés")));
+                                                  child: Text("Telepítés",
+                                                      style: TextStyle(
+                                                          color: ApplicationTheme
+                                                              .appColorLighterGrey))));
                                         }
                                       } else {
                                         return const Center(
@@ -106,7 +123,8 @@ class Application extends StatelessWidget {
                                   ),
                                 )));
                         if (downloaded != null) {
-                          if(permissions[Permission.requestInstallPackages]!.isGranted) {
+                          if (permissions[Permission.requestInstallPackages]!
+                              .isGranted) {
                             OpenFile.open(downloaded);
                           }
                         }
