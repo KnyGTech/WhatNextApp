@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:whatnext_flutter_client/application/application_theme.dart';
@@ -50,16 +52,24 @@ class _ShowViewState extends State<ShowView> {
     return ReorderableListView.builder(
         padding: const EdgeInsets.all(5.0),
         proxyDecorator: (Widget child, int index, Animation<double> animation) {
-          var card = (((child as ReorderableDelayedDragStartListener).child
-                      as MergeSemantics)
-                  .child as Semantics)
-              .child as Card;
-          return Card(
-            elevation: 3,
-            margin: const EdgeInsets.all(5.0),
-            color: ApplicationTheme.appColorBlue,
-            clipBehavior: Clip.antiAlias,
-            child: card.child,
+          if(Platform.isAndroid) {
+            var card = (((child as ReorderableDelayedDragStartListener).child
+            as MergeSemantics)
+                .child as Semantics)
+                .child as Card;
+            return Card(
+              elevation: 3,
+              margin: const EdgeInsets.all(5.0),
+              color: ApplicationTheme.appColorBlue,
+              clipBehavior: Clip.antiAlias,
+              child: card.child,
+            );
+          }
+          return Container(
+            decoration: BoxDecoration(
+              color: ApplicationTheme.appColorBlue,
+            ),
+            child: child,
           );
         },
         itemCount: _shows.length,
