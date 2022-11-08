@@ -42,13 +42,26 @@ class ScraperWhatNextClient extends WhatNextClient {
     var doc = await _getWebpageContent();
     var shows = _findShows(doc);
     var episodes = _findEpisodes(doc);
+
+    shows = shows.map((s) {
+      if(episodes.where((ep) => !ep.seen && ep.showId == s.id && DateTime.now().isBefore(ep.date ?? DateTime.now().subtract(const Duration(days: 1)))).isNotEmpty) {
+        s.indicator = false;
+      }
+      else if(episodes.where((ep) => !ep.seen && ep.showId == s.id).isEmpty){
+        s.indicator = true;
+      }
+      return s;
+    }).toList();
+
     _groupCache[groupId] = shows;
+
     _showCache.addEntries(shows.map(
       (e) => MapEntry(e.id, e),
     ));
     var episodeGroups = groupBy(
         episodes, (Episode episode) => episode.showId * 100 + episode.season);
     _episodeCache.addAll(episodeGroups);
+
     return shows;
   }
 

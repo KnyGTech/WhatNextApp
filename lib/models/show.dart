@@ -16,6 +16,7 @@ class Show {
   int seasonActual;
   int seasonAll;
 
+  bool? indicator;
   String? hungarianTitle;
   String? genre;
   String? status;

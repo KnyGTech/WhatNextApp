@@ -96,7 +96,11 @@ class _ShowViewState extends State<ShowView> {
               subtitle: Text(
                   'Évad: ${_shows[i].seasonActual}/${_shows[i].seasonAll}'),
               onTap: () => _navigateToDetails(_shows[i].id),
-              trailing: PopupMenuButton(
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                  children: [
+                   _shows[i].indicator == null ? const Icon(null) : _shows[i].indicator! ? const Icon( Icons.check_circle_outline ): Icon(Icons.more_time, color: ApplicationTheme.appColorBlue),
+                PopupMenuButton(
                   itemBuilder: (context) => [
                         PopupMenuItem(
                           child: const Text('Törlés'),
@@ -124,7 +128,8 @@ class _ShowViewState extends State<ShowView> {
                             });
                           },
                         )
-                      ]),
+                      ])
+              ]) ,
             )));
   }
 
