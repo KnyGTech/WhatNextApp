@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:get_it/get_it.dart';
 import 'package:whatnext_flutter_client/application/application_theme.dart';
 import 'package:whatnext_flutter_client/events/new_show_added_event.dart';
@@ -23,6 +24,7 @@ class _ShowViewState extends State<ShowView> {
   final newShowAddedEvent = GetIt.I.get<NewShowAddedEvent>();
   final WhatNextClient _client = GetIt.I.get<WhatNextClient>();
   final _shows = <Show>[];
+  ScrollDirection _previousDirection = ScrollDirection.idle;
 
   @override
   void initState() {
@@ -52,8 +54,13 @@ class _ShowViewState extends State<ShowView> {
   Widget _renderListView() {
     var controller = ScrollController();
     controller.addListener(() {
-      GetIt.I.get<ShowsScrollingEvent>().broadcast(
-          ShowsScrollingEventArgs(controller.position.userScrollDirection));
+      var currentDirection = controller.position.userScrollDirection;
+      if (_previousDirection != currentDirection) {
+        GetIt.I
+            .get<ShowsScrollingEvent>()
+            .broadcast(ShowsScrollingEventArgs(currentDirection));
+        _previousDirection = currentDirection;
+      }
     });
     return ReorderableListView.builder(
         scrollController: controller,
@@ -97,75 +104,81 @@ class _ShowViewState extends State<ShowView> {
             margin: const EdgeInsets.all(5.0),
             clipBehavior: Clip.antiAlias,
             child: ListTile(
-              dense: true,
-              leading: ImageBanner(_shows[i].banner),
-              title: Text(_shows[i].name,
-                  style: Theme.of(context).textTheme.titleLarge),
-              subtitle: Text(
-                  'Évad: ${_shows[i].seasonActual}/${_shows[i].seasonAll}'),
-              onTap: () => _navigateToDetails(_shows[i].id),
-              trailing: Row(mainAxisSize: MainAxisSize.min, children: [
-              _shows[i].indicator == null
-              ? const Icon(null)
-                    : _shows[i].indicator!
-            ? const Icon(Icons.check_circle_outline)
-                : Icon(Icons.more_time,
-            color: ApplicationTheme.appColorBlue),
-      PopupMenuButton(
-                icon: Icon(Icons.more_vert, color: ApplicationTheme.appColorLighterGrey),
-                  itemBuilder: (context) => [
-                        PopupMenuItem(
-                          child: Text('Törlés', style: Theme.of(context).textTheme.titleLarge),
-                          onTap: () async {
-                            await _client.removeShow(_shows[i].id);
-                            refresh();
-                          },
-                        ),
-                        PopupMenuItem(
-                          child: Text('Áthelyezés', style: Theme.of(context).textTheme.titleLarge),
-                          onTap: () async {
-                            var groups = (await _client.getGroups()).where(
-                                (Group group) =>
-                                    group.index != widget._groupId);
+                dense: true,
+                leading: ImageBanner(_shows[i].banner),
+                title: Text(_shows[i].name,
+                    style: Theme.of(context).textTheme.titleLarge),
+                subtitle: Text(
+                    'Évad: ${_shows[i].seasonActual}/${_shows[i].seasonAll}'),
+                onTap: () => _navigateToDetails(_shows[i].id),
+                trailing: Row(mainAxisSize: MainAxisSize.min, children: [
+                  _shows[i].indicator == null
+                      ? const Icon(null)
+                      : _shows[i].indicator!
+                          ? const Icon(Icons.check_circle_outline)
+                          : Icon(Icons.more_time,
+                              color: ApplicationTheme.appColorBlue),
+                  PopupMenuButton(
+                      icon: Icon(Icons.more_vert,
+                          color: ApplicationTheme.appColorLighterGrey),
+                      itemBuilder: (context) => [
+                            PopupMenuItem(
+                              child: Text('Törlés',
+                                  style:
+                                      Theme.of(context).textTheme.titleLarge),
+                              onTap: () async {
+                                await _client.removeShow(_shows[i].id);
+                                refresh();
+                              },
+                            ),
+                            PopupMenuItem(
+                              child: Text('Áthelyezés',
+                                  style:
+                                      Theme.of(context).textTheme.titleLarge),
+                              onTap: () async {
+                                var groups = (await _client.getGroups()).where(
+                                    (Group group) =>
+                                        group.index != widget._groupId);
 
-                            WidgetsBinding.instance
-                                .addPostFrameCallback((_) async {
-                              var result = await showDialog(
-                                  context: context,
-                                  builder: (context) => SimpleDialog(
-                                        title: const Text(
-                                            "Áthelyezés másik lapra"),
-                                        children: groups
-                                            .map((group) => SimpleDialogOption(
-                                                  padding: const EdgeInsets
-                                                          .symmetric(
-                                                      vertical: 16.0,
-                                                      horizontal: 24.0),
-                                                  onPressed: () {
-                                                    Navigator.pop(
-                                                        context, group.index);
-                                                  },
-                                                  child: Text(group.title,
-                                                      style: Theme.of(context)
-                                                          .textTheme
-                                                          .titleLarge!
-                                                          .copyWith(
-                                                              color: ApplicationTheme
-                                                                  .appColorBlue,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .normal)),
-                                                ))
-                                            .toList(),
-                                      ));
-                              await _client.move(_shows[i].id, result);
-                              refresh();
-                            });
-                          },
-                        )
-                      ])
-        ])
-            )));
+                                WidgetsBinding.instance
+                                    .addPostFrameCallback((_) async {
+                                  var result = await showDialog(
+                                      context: context,
+                                      builder: (context) => SimpleDialog(
+                                            title: const Text(
+                                                "Áthelyezés másik lapra"),
+                                            children: groups
+                                                .map((group) =>
+                                                    SimpleDialogOption(
+                                                      padding: const EdgeInsets
+                                                              .symmetric(
+                                                          vertical: 16.0,
+                                                          horizontal: 24.0),
+                                                      onPressed: () {
+                                                        Navigator.pop(context,
+                                                            group.index);
+                                                      },
+                                                      child: Text(group.title,
+                                                          style: Theme.of(
+                                                                  context)
+                                                              .textTheme
+                                                              .titleLarge!
+                                                              .copyWith(
+                                                                  color: ApplicationTheme
+                                                                      .appColorBlue,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .normal)),
+                                                    ))
+                                                .toList(),
+                                          ));
+                                  await _client.move(_shows[i].id, result);
+                                  refresh();
+                                });
+                              },
+                            )
+                          ])
+                ]))));
   }
 
   Future refresh() async {
