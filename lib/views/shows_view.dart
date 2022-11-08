@@ -1,9 +1,11 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:get_it/get_it.dart';
 import 'package:whatnext_flutter_client/application/application_theme.dart';
 import 'package:whatnext_flutter_client/events/new_show_added_event.dart';
+import 'package:whatnext_flutter_client/events/shows_scrolling_event.dart';
 import 'package:whatnext_flutter_client/pages/detail_page.dart';
 import 'package:whatnext_flutter_client/interfaces/interfaces.dart';
 import '../models/models.dart';
@@ -38,8 +40,9 @@ class _ShowViewState extends State<ShowView> {
           if (snapshot.data != null) {
             _shows.clear();
             _shows.addAll(snapshot.data ?? []);
-            return RefreshIndicator(
-                onRefresh: refresh, child: _renderListView());
+            var indicator =
+                RefreshIndicator(onRefresh: refresh, child: _renderListView());
+            return indicator;
           } else {
             return const Center(
               child: RefreshProgressIndicator(),
@@ -49,13 +52,20 @@ class _ShowViewState extends State<ShowView> {
   }
 
   Widget _renderListView() {
+    var controller = ScrollController();
+    controller.addListener(() {
+      GetIt.I.get<ShowsScrollingEvent>().broadcast(
+          ShowsScrollingEventArgs(controller.position.userScrollDirection));
+    });
     return ReorderableListView.builder(
-        padding: const EdgeInsets.all(5.0),
+        scrollController: controller,
+        physics: const AlwaysScrollableScrollPhysics(),
+        padding: const EdgeInsets.fromLTRB(5.0, 5.0, 5.0, 75.0),
         proxyDecorator: (Widget child, int index, Animation<double> animation) {
-          if(Platform.isAndroid) {
+          if (Platform.isAndroid) {
             var card = (((child as ReorderableDelayedDragStartListener).child
-            as MergeSemantics)
-                .child as Semantics)
+                        as MergeSemantics)
+                    .child as Semantics)
                 .child as Card;
             return Card(
               elevation: 3,
@@ -96,40 +106,55 @@ class _ShowViewState extends State<ShowView> {
               subtitle: Text(
                   'Évad: ${_shows[i].seasonActual}/${_shows[i].seasonAll}'),
               onTap: () => _navigateToDetails(_shows[i].id),
-              trailing: Row(
-                mainAxisSize: MainAxisSize.min,
-                  children: [
-                   _shows[i].indicator == null ? const Icon(null) : _shows[i].indicator! ? const Icon( Icons.check_circle_outline ): Icon(Icons.more_time, color: ApplicationTheme.appColorBlue),
+              trailing: Row(mainAxisSize: MainAxisSize.min, children: [
+                _shows[i].indicator == null
+                    ? const Icon(null)
+                    : _shows[i].indicator!
+                        ? const Icon(Icons.check_circle_outline)
+                        : Icon(Icons.more_time,
+                            color: ApplicationTheme.appColorBlue),
                 PopupMenuButton(
-                  itemBuilder: (context) => [
-                        PopupMenuItem(
-                          child: const Text('Törlés'),
-                          onTap: () async {
-                            await _client.removeShow(_shows[i].id);
-                            refresh();
-                          },
-                        ),
-                        PopupMenuItem(
-                          child: const Text('Áthelyezés'),
-                          onTap: () async {
-                            var groups = (await _client.getGroups()).where((Group group) => group.index != widget._groupId);
-
-                            WidgetsBinding.instance.addPostFrameCallback((_) async {
-                              var result = await showDialog(context: context, builder: (context) => SimpleDialog(
-                                title: const Text("Áthelyezés másik lapra"),
-                                children: groups.map((group) => SimpleDialogOption(
-                                  onPressed: () {Navigator.pop(context, group.index);},
-                                  child: Text(group.title),
-                                )).toList(),
-                              ));
-                              await _client.move(_shows[i].id, result);
+                    itemBuilder: (context) => [
+                          PopupMenuItem(
+                            child: const Text('Törlés'),
+                            onTap: () async {
+                              await _client.removeShow(_shows[i].id);
                               refresh();
-                              // newShowAddedEvent.broadcast(NewShowAddedEventArgs(result));
-                            });
-                          },
-                        )
-                      ])
-              ]) ,
+                            },
+                          ),
+                          PopupMenuItem(
+                            child: const Text('Áthelyezés'),
+                            onTap: () async {
+                              var groups = (await _client.getGroups()).where(
+                                  (Group group) =>
+                                      group.index != widget._groupId);
+
+                              WidgetsBinding.instance
+                                  .addPostFrameCallback((_) async {
+                                var result = await showDialog(
+                                    context: context,
+                                    builder: (context) => SimpleDialog(
+                                          title: const Text(
+                                              "Áthelyezés másik lapra"),
+                                          children: groups
+                                              .map((group) =>
+                                                  SimpleDialogOption(
+                                                    onPressed: () {
+                                                      Navigator.pop(
+                                                          context, group.index);
+                                                    },
+                                                    child: Text(group.title),
+                                                  ))
+                                              .toList(),
+                                        ));
+                                await _client.move(_shows[i].id, result);
+                                refresh();
+                                // newShowAddedEvent.broadcast(NewShowAddedEventArgs(result));
+                              });
+                            },
+                          )
+                        ])
+              ]),
             )));
   }
 

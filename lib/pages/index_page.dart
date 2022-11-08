@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:get_it/get_it.dart';
 import 'package:whatnext_flutter_client/events/new_show_added_event.dart';
+import 'package:whatnext_flutter_client/events/shows_scrolling_event.dart';
 import 'package:whatnext_flutter_client/pages/profile_page.dart';
 import 'package:whatnext_flutter_client/pages/search_page.dart';
 
@@ -19,6 +21,14 @@ class IndexPage extends StatefulWidget {
 class _IndexPageState extends State<IndexPage> {
   final WhatNextClient _client = GetIt.I.get<WhatNextClient>();
   final List<Group> _groups = [];
+  bool _isFabVisible = true;
+
+
+  @override
+  void initState() {
+    super.initState();
+    GetIt.I.get<ShowsScrollingEvent>().subscribe((args) => setState((){_isFabVisible = args!.direction == ScrollDirection.forward;}));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -125,7 +135,10 @@ class _IndexPageState extends State<IndexPage> {
                                 .map((group) => ShowView(group.index))
                                 .toList(),
                           ),
-                          floatingActionButton: FloatingActionButton(
+                          floatingActionButton: AnimatedSlide(
+                            duration: const Duration(milliseconds: 300),
+                            offset: _isFabVisible ? Offset.zero : const Offset(0, 2),
+                            child: FloatingActionButton(
                             onPressed: () async {
                               final tabIndex =
                                   DefaultTabController.of(context)?.index ?? 1;
@@ -153,7 +166,7 @@ class _IndexPageState extends State<IndexPage> {
                               }
                             },
                             child: const Icon(Icons.add),
-                          ),
+                          ))
                         )));
           } else {
             return const Center(child: RefreshProgressIndicator());
