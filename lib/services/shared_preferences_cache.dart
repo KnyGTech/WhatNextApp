@@ -20,6 +20,8 @@ class SharedPreferencesCache implements Cache {
           return _sharedPreferences.getBool(key) as T;
         case double:
           return _sharedPreferences.getDouble(key) as T;
+        case List<String>:
+          return List<String>.from(jsonDecode(_sharedPreferences.getString(key)!)) as T;
         default:
           return jsonDecode(_sharedPreferences.getString(key)!) as T;
       }

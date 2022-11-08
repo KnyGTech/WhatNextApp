@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:whatnext_flutter_client/interfaces/interfaces.dart';
 
 import '../application/application_theme.dart';
@@ -23,7 +24,9 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
-        body: Column(
+        body: Center(
+            child: SingleChildScrollView(
+                child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -107,11 +110,22 @@ class _LoginPageState extends State<LoginPage> {
                                   }
                                 },
                                 child: Text("Bejelentkezés",
-                                    style:
-                                        Theme.of(context).textTheme.titleLarge))
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleLarge)),
+                            const SizedBox(height: 25),
+                            TextButton(
+                                onPressed: () async {
+                                  final url =
+                                      Uri.parse(client.getRegisterLink());
+                                  if (!await launchUrl(url)) {
+                                    print('Could not launch $url');
+                                  }
+                                },
+                                child: const Text("Regisztráció"))
                           ],
                         ))))
           ],
-        ));
+        ))));
   }
 }

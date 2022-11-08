@@ -41,6 +41,10 @@ dependencies:
   collection: ^1.16.0
   shared_preferences: ^2.0.15
   event: ^2.1.2
+  package_info_plus: ^1.4.2
+  permission_handler: ^9.2.0
+  open_file: ^3.2.1
+  url_launcher: ^6.1.3
 
 dev_dependencies:
   flutter_test:
@@ -69,6 +73,7 @@ flutter:
     - assets/images/logo.png
     - assets/images/ikon_placeholder.png
     - assets/images/avatar.png
+    - assets/secrets/updater.json
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

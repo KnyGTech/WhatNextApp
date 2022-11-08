@@ -3,7 +3,7 @@
 # separate terms of service, privacy policy, and support
 # documentation.
 
-name: Dart
+name: Build APK
 
 on:
   create:
@@ -14,16 +14,33 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
-    - uses: actions/setup-java@v2
-      with:
-        distribution: 'zulu'
-        java-version: '11'
-    - uses: subosito/flutter-action@v2
-      with:
-        flutter-version: '3.0.4'
-    - run: flutter pub get
-    - run: flutter build apk
-    - uses: softprops/action-gh-release@v1
-      with:
-        files: build\app\outputs\flutter-apk\app-release.apk
+      - uses: actions/checkout@v3
+      - uses: actions/setup-java@v2
+        with:
+          distribution: 'zulu'
+          java-version: '11'
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.0.2'
+      - name: Determine version
+        id: get_version
+        run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
+      - name: Export secrets
+        run: |
+          echo $KEY_JKS | base64 -i -d > android/key.jks
+          mkdir assets/secrets && echo $UPDATER_CONFIG > assets/secrets/updater.json
+        env:
+          KEY_JKS: ${{ secrets.KEY_JKS }}
+          UPDATER_CONFIG: ${{ secrets.UPDATER_CONFIG }}
+      - name: Build APK
+        run: |
+          flutter pub get
+          flutter build apk --release --build-name ${{ steps.get_version.outputs.VERSION }}
+          mv build/app/outputs/flutter-apk/app-release.apk build/app/outputs/flutter-apk/whatnext-${{ steps.get_version.outputs.VERSION }}.apk
+        env:
+          KEY_PASSWORD: ${{ secrets.ALIAS_PASSWORD }}
+          ALIAS_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+      - name: Upload APK
+        uses: softprops/action-gh-release@v1
+        with:
+          files: build/app/outputs/flutter-apk/whatnext-${{ steps.get_version.outputs.VERSION }}.apk

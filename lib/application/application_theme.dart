@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
 class ApplicationTheme {
-  static Color appColorLighterGray = const Color.fromARGB(255, 192, 192, 192);
+  static Color appColorLighterGrey = const Color.fromARGB(255, 192, 192, 192);
   static Color appColorLightGrey = const Color.fromARGB(255, 136, 136, 136);
   static Color appColorMediumGrey = const Color.fromARGB(255, 65, 65, 65);
-  static Color appColorDarkGray = const Color.fromARGB(255, 40, 40, 40);
-  static Color appColorDarkerGray = const Color.fromARGB(255, 19, 19, 19);
+  static Color appColorDarkGrey = const Color.fromARGB(255, 40, 40, 40);
+  static Color appColorDarkerGrey = const Color.fromARGB(255, 19, 19, 19);
   static Color appColorBlue = const Color.fromARGB(255, 19, 119, 149);
 
   static TextStyle errorTextTheme =
@@ -13,27 +13,27 @@ class ApplicationTheme {
 
   static ThemeData primaryTheme = ThemeData(
       appBarTheme: AppBarTheme(
-          backgroundColor: appColorDarkerGray,
+          backgroundColor: appColorDarkerGrey,
           foregroundColor: appColorLightGrey),
       indicatorColor: appColorBlue,
       backgroundColor: appColorMediumGrey,
       scaffoldBackgroundColor: appColorMediumGrey,
       floatingActionButtonTheme: FloatingActionButtonThemeData(
-          backgroundColor: appColorBlue, foregroundColor: appColorLighterGray),
-      cardColor: appColorDarkGray,
-      primaryColor: appColorLighterGray,
+          backgroundColor: appColorBlue, foregroundColor: appColorLighterGrey),
+      cardColor: appColorDarkGrey,
+      primaryColor: appColorLighterGrey,
       primaryTextTheme: TextTheme(
-        bodyText1: TextStyle(color: appColorLighterGray),
+        bodyText1: TextStyle(color: appColorLighterGrey),
       ),
       textTheme: TextTheme(
           titleLarge: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: appColorLighterGray)),
+              color: appColorLighterGrey)),
       listTileTheme: ListTileThemeData(
-        textColor: appColorLighterGray,
+        textColor: appColorLighterGrey,
       ),
       colorScheme: ColorScheme.dark(primary: appColorBlue),
       progressIndicatorTheme: ProgressIndicatorThemeData(
-          refreshBackgroundColor: appColorLighterGray, color: appColorBlue));
+          refreshBackgroundColor: appColorLighterGrey, color: appColorBlue));
 }

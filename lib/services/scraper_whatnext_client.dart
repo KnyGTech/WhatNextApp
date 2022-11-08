@@ -417,4 +417,9 @@ class ScraperWhatNextClient extends WhatNextClient {
     }
     return shows;
   }
+
+  @override
+  String getRegisterLink() {
+    return "$baseUrl/regisztracio";
+  }
 }

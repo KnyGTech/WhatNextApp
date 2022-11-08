@@ -1,6 +1,11 @@
+import 'dart:convert';
+
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:whatnext_flutter_client/events/new_show_added_event.dart';
+import 'package:whatnext_flutter_client/interfaces/auto_updater.dart';
 import 'package:whatnext_flutter_client/events/shows_scrolling_event.dart';
 
 import '../interfaces/interfaces.dart';
@@ -17,15 +22,26 @@ class ServiceConfigurator {
       final client = ScraperWhatNextClient(
           baseUrl: 'https://whatnext.cc', credentialManager: credentialManager);
 
-      // services
-      getIt.registerSingleton<WhatNextClient>(client);
-      getIt.registerSingleton<Cache>(cache);
-      getIt.registerSingleton<CredentialManager>(credentialManager);
+      final String response = await rootBundle.loadString('assets/secrets/updater.json');
+      final updaterConfig = await jsonDecode(response);
+      final updater = GithubReleaseAutoUpdater(cache,
+          repoUrl: updaterConfig['repoUrl'],
+          accessToken: updaterConfig['accessToken']);
+      await updater.checkForUpdate();
 
-      // events
-      getIt.registerSingleton<NewShowAddedEvent>(NewShowAddedEvent());
-      getIt.registerSingleton<ShowsScrollingEvent>(ShowsScrollingEvent());
+      try {
+        // services
+        getIt.registerSingleton<WhatNextClient>(client);
+        getIt.registerSingleton<Cache>(cache);
+        getIt.registerSingleton<CredentialManager>(credentialManager);
+        getIt.registerSingleton<AutoUpdater>(updater);
 
+        // events
+        getIt.registerSingleton<NewShowAddedEvent>(NewShowAddedEvent());
+        getIt.registerSingleton<ShowsScrollingEvent>(ShowsScrollingEvent());
+      } catch (e) {
+        print(e);
+      }
     }
 
     return true;
