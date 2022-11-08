@@ -315,7 +315,8 @@ class ScraperWhatNextClient extends WhatNextClient {
   Future move(int showId, int groupId) async {
     var shows =
         (await getShows(groupId, force: true)).map((show) => show.id).toList();
-    shows.insert(0, showId);
+
+    shows.add(showId);
 
     await reorder(shows, groupId);
 
