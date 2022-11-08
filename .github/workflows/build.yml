@@ -23,7 +23,6 @@ jobs:
       with:
         flutter-version: '3.0.4'
     - run: flutter pub get
-    - run: flutter test
     - run: flutter build apk
     - uses: softprops/action-gh-release@v1
       with:
