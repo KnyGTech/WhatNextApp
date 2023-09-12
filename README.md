@@ -1,4 +1,4 @@
-# WhatNext Flutter Client
+# WhatNext
 
-WhatNextCrawler for Android
+WhatNext App for Android
 

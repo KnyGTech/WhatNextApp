@@ -3,13 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:get_it/get_it.dart';
-import 'package:whatnext_flutter_client/application/application_theme.dart';
-import 'package:whatnext_flutter_client/events/new_show_added_event.dart';
-import 'package:whatnext_flutter_client/events/shows_scrolling_event.dart';
-import 'package:whatnext_flutter_client/pages/detail_page.dart';
-import 'package:whatnext_flutter_client/interfaces/interfaces.dart';
-import '../models/models.dart';
-import 'image_banner.dart';
+import 'package:whatnext/_lib.dart';
 
 class ShowView extends StatefulWidget {
   final int _groupId;

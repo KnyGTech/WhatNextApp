@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import 'package:whatnext_flutter_client/interfaces/whatnext_client.dart';
-
-import '../models/show.dart';
-import '../views/episodes_view.dart';
-import '../views/image_banner.dart';
+import 'package:whatnext/_lib.dart';
 
 class DetailPage extends StatefulWidget {
   const DetailPage(this._showId, {Key? key}) : super(key: key);

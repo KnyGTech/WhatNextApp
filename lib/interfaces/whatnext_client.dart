@@ -1,4 +1,4 @@
-import '../models/models.dart';
+import 'package:whatnext/_lib.dart';
 
 abstract class WhatNextClient {
   Future<List<Group>> getGroups();

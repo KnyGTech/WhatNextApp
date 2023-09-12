@@ -1,4 +1,4 @@
-import 'episode.dart';
+import 'package:whatnext/_lib.dart';
 
 class Show {
   Show(

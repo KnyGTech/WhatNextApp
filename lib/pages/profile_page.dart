@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import 'package:whatnext_flutter_client/application/application_theme.dart';
-import 'package:whatnext_flutter_client/interfaces/interfaces.dart';
-
-import '../models/models.dart';
-import '../views/image_banner.dart';
+import 'package:whatnext/_lib.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({Key? key}) : super(key: key);

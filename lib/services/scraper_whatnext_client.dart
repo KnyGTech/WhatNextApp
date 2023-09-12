@@ -2,8 +2,7 @@ import 'package:collection/collection.dart';
 import 'package:html/dom.dart';
 import 'package:html/parser.dart' as parser;
 import 'package:http/http.dart' as http;
-import 'package:whatnext_flutter_client/interfaces/interfaces.dart';
-import 'package:whatnext_flutter_client/models/models.dart';
+import 'package:whatnext/_lib.dart';
 
 class ScraperWhatNextClient extends WhatNextClient {
   ScraperWhatNextClient(

@@ -1,16 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:get_it/get_it.dart';
-import 'package:whatnext_flutter_client/application/application_theme.dart';
-import 'package:whatnext_flutter_client/events/new_show_added_event.dart';
-import 'package:whatnext_flutter_client/events/shows_scrolling_event.dart';
-import 'package:whatnext_flutter_client/pages/profile_page.dart';
-import 'package:whatnext_flutter_client/pages/search_page.dart';
-
-import '../interfaces/interfaces.dart';
-import '../models/models.dart';
-import '../views/shows_view.dart';
-import 'login_page.dart';
+import 'package:whatnext/_lib.dart';
 
 class IndexPage extends StatefulWidget {
   const IndexPage({Key? key}) : super(key: key);

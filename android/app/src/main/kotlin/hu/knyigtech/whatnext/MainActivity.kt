@@ -1,4 +1,4 @@
-package hu.knyihargabor.whatnextclient.whatnext_flutter_client
+package hu.knyigtech.whatnext
 
 import io.flutter.embedding.android.FlutterActivity
 

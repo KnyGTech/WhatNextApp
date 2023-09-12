@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:whatnext_flutter_client/interfaces/interfaces.dart';
+import 'package:whatnext/_lib.dart';
 
 class SharedPreferencesCache implements Cache {
   final SharedPreferences _sharedPreferences;

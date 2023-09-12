@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:intl/intl.dart';
-import 'package:whatnext_flutter_client/application/application_theme.dart';
-
-import '../models/episode.dart';
-import '../interfaces/interfaces.dart';
+import 'package:whatnext/_lib.dart';
 
 class EpisodesView extends StatefulWidget {
   final int _showId;

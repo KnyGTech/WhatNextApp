@@ -1,4 +1,4 @@
-import 'package:whatnext_flutter_client/interfaces/interfaces.dart';
+import 'package:whatnext/_lib.dart';
 
 class WhatNextCacheCredentialManager implements CredentialManager {
   final Cache _cache;

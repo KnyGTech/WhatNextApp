@@ -1,10 +1,8 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:whatnext_flutter_client/interfaces/interfaces.dart';
-
-import '../application/application_theme.dart';
-import 'index_page.dart';
+import 'package:whatnext/_lib.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -118,8 +116,10 @@ class _LoginPageState extends State<LoginPage> {
                                 onPressed: () async {
                                   final url =
                                       Uri.parse(client.getRegisterLink());
-                                  if (!await launchUrl(url)) {
-                                    print('Could not launch $url');
+                                  if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
+                                    if (kDebugMode) {
+                                      print('Could not launch $url');
+                                    }
                                   }
                                 },
                                 child: const Text("Regisztráció"))

@@ -1,4 +1,4 @@
-import 'activity.dart';
+import 'package:whatnext/_lib.dart';
 
 class Profile {
   Profile(
