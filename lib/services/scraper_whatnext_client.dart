@@ -374,7 +374,7 @@ class ScraperWhatNextClient extends WhatNextClient {
               (profileDocument.querySelector('img.av')?.attributes['src'] ??
                   ''),
           statistics:
-              statDocument.querySelectorAll('span.big-text')[1].innerHtml,
+            statDocument.querySelectorAll('span.big-text').isNotEmpty ? statDocument.querySelectorAll('span.big-text')[1].innerHtml : '',
           shows: await _getAllShow(),
           activities: profileDocument
               .querySelectorAll('div.x34 table tr')
