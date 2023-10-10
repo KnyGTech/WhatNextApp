@@ -65,7 +65,7 @@ class _IndexPageState extends State<IndexPage> {
                                 var result = await showDialog(
                                     context: context,
                                     builder: (context) => AlertDialog(
-                                          title: const Text("Új név megadása"),
+                                          title: const Text("Oldal nevének megadása"),
                                           content: Form(
                                               key: formKey,
                                               child: TextFormField(
