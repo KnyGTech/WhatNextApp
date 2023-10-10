@@ -8,6 +8,20 @@ class ApplicationTheme {
   static Color appColorDarkerGrey = const Color.fromARGB(255, 19, 19, 19);
   static Color appColorBlue = const Color.fromARGB(255, 19, 119, 149);
 
+  static Color tabColorGreen = const Color.fromARGB(255, 39, 151, 71);
+  static Color tabColorYellow = const Color.fromARGB(255, 169, 182, 64);
+  static Color tabColorRed = const Color.fromARGB(255, 126, 36, 38);
+  static Color tabColorOrange = const Color.fromARGB(255, 159, 95, 2);
+  static Color tabColorBlue = const Color.fromARGB(255, 25, 107, 159);
+
+  static List<Color> tabColors = [
+    ApplicationTheme.tabColorGreen,
+    ApplicationTheme.tabColorYellow,
+    ApplicationTheme.tabColorRed,
+    ApplicationTheme.tabColorOrange,
+    ApplicationTheme.tabColorBlue
+  ];
+
   static TextStyle errorTextTheme =
       const TextStyle(fontSize: 14, color: Colors.red);
 
