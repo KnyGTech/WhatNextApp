@@ -15,5 +15,5 @@ Ez az alkalmazás a népszerű WhatNext sorozatkövető weboldal telefonos alkal
   <img src="assets/screenshots/Screenshot_4.png" alt="screenshot4" width="200"/>
 </div>
 <div>
-  <img src="assets/screenshots/Screenshot_4.png" alt="screenshot5" width="600"/>
+  <img src="assets/screenshots/Screenshot_5.png" alt="screenshot5" width="600"/>
 </div>
