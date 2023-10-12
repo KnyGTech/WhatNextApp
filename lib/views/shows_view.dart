@@ -195,11 +195,13 @@ class _ShowViewState extends State<ShowView> {
           if (snapshot.hasData) {
             var episodes = snapshot.data as List<Episode>;
             var controller = ScrollController();
+
             return Expanded(
                 child: Container(
                     margin: Platform.isAndroid ? const EdgeInsets.fromLTRB(0, 5, 10, 5) : const EdgeInsets.fromLTRB(0, 5, 35, 5),
                     constraints: const BoxConstraints(maxHeight: 55),
                     child: Scrollbar(
+                      thickness: Platform.isAndroid ? 0 : null,
                       controller: controller,
                         child: ListView.builder(
                           controller: controller,
