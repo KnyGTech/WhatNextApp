@@ -11,9 +11,8 @@ class Application extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (Platform.isAndroid) {
-      SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-          systemNavigationBarColor: Color.fromARGB(255, 18, 18, 18),
-          systemNavigationBarIconBrightness: Brightness.light));
+      SystemChrome.setSystemUIOverlayStyle(
+          const SystemUiOverlayStyle(systemNavigationBarColor: Color.fromARGB(255, 18, 18, 18), systemNavigationBarIconBrightness: Brightness.light));
     }
 
     return MaterialApp(
@@ -21,10 +20,7 @@ class Application extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         theme: ApplicationTheme.primaryTheme,
         home: FutureBuilder(
-          future: Future.wait([
-            ServiceConfigurator.setup(),
-            Future.delayed(const Duration(seconds: 1), () => true)
-          ]),
+          future: Future.wait([ServiceConfigurator.setup(), Future.delayed(const Duration(seconds: 1), () => true)]),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               final client = GetIt.I.get<WhatNextClient>();

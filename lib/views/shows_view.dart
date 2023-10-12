@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:get_it/get_it.dart';
@@ -105,20 +104,7 @@ class _ShowViewState extends State<ShowView> {
   }
 
   Widget getListTile(BuildContext context, Show show) {
-    return LayoutBuilder(builder: (context, constraints) {
-      if (constraints.maxWidth < 500) {
-        return ListTile(
-            dense: true,
-            leading: ImageBanner(show.banner),
-            title: Text(show.name, style: Theme.of(context).textTheme.titleLarge),
-            subtitle: Text('Évad: ${show.seasonActual}/${show.seasonAll}'),
-            onTap: () => navigateToDetails(show.id),
-            trailing: Row(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [getShowIndicator(context, show), getListTilePopupActions(context, show)]));
-      }
-
+    if (ApplicationTheme.isLargeDevice(context)) {
       return Row(
         mainAxisAlignment: MainAxisAlignment.start,
         mainAxisSize: MainAxisSize.max,
@@ -177,7 +163,18 @@ class _ShowViewState extends State<ShowView> {
           getShowEpisodeList(context, show)
         ],
       );
-    });
+    }
+    return ListTile(
+        dense: true,
+        leading:
+            ApplicationTheme.isSmallDevice(context) ? ImageBanner(show.banner, size: ApplicationTheme.isMediumDevice(context) ? null : 65) : null,
+        title: Text(show.name, style: Theme.of(context).textTheme.titleLarge),
+        subtitle: Text('Évad: ${show.seasonActual}/${show.seasonAll}'),
+        onTap: () => navigateToDetails(show.id),
+        trailing: Row(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [getShowIndicator(context, show), getListTilePopupActions(context, show)]));
   }
 
   Widget getShowIndicator(BuildContext context, Show show) {
@@ -201,50 +198,53 @@ class _ShowViewState extends State<ShowView> {
                     margin: Platform.isAndroid ? const EdgeInsets.fromLTRB(0, 5, 10, 5) : const EdgeInsets.fromLTRB(0, 5, 35, 5),
                     constraints: const BoxConstraints(maxHeight: 55),
                     child: Scrollbar(
-                      thickness: Platform.isAndroid ? 0 : null,
-                      controller: controller,
+                        thickness: Platform.isAndroid ? 0 : null,
+                        controller: controller,
                         child: ListView.builder(
                           controller: controller,
-                      scrollDirection: Axis.horizontal,
-                      itemCount: episodes.length,
-                      physics: const AlwaysScrollableScrollPhysics(),
-                      clipBehavior: Clip.antiAlias,
-                      itemBuilder: (context, index) => Container(
-                        decoration: BoxDecoration(
-                            borderRadius: const BorderRadius.all(Radius.circular(3)),
-                            border: Border.all(color: ApplicationTheme.appColorLightGrey, width: 1)),
-                        margin: const EdgeInsets.only(right: 3),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text('S${episodes[index].season.toString().padLeft(2, '0')}',
-                                maxLines: 1, textAlign: TextAlign.center, style: TextStyle(fontSize: 10, color: ApplicationTheme.appColorLightGrey)),
-                            Text('E${episodes[index].episode.toString().padLeft(2, '0')}',
-                                maxLines: 1,
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                    fontSize: 10,
-                                    color: episodes[index].date != null
-                                        ? (episodes[index].date!.isAfter(DateTime.now()) ? ApplicationTheme.appColorBlue : null)
-                                        : null)),
-                            SizedBox(
-                              width: 25,
-                              height: 20,
-                              child: Checkbox(
-                                value: episodes[index].seen,
-                                onChanged: (value) {
-                                  _client.markEpisode(episodes[index]);
-                                  refresh();
-                                },
-                                visualDensity: VisualDensity.compact,
-                                fillColor: MaterialStatePropertyAll(ApplicationTheme.appColorBlue),
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                    ))));
+                          scrollDirection: Axis.horizontal,
+                          itemCount: episodes.length,
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          clipBehavior: Clip.antiAlias,
+                          itemBuilder: (context, index) => Container(
+                            decoration: BoxDecoration(
+                                borderRadius: const BorderRadius.all(Radius.circular(3)),
+                                border: Border.all(color: ApplicationTheme.appColorLightGrey, width: 1)),
+                            margin: const EdgeInsets.only(right: 3),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text('S${episodes[index].season.toString().padLeft(2, '0')}',
+                                    maxLines: 1,
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(fontSize: 10, color: ApplicationTheme.appColorLightGrey)),
+                                Text('E${episodes[index].episode.toString().padLeft(2, '0')}',
+                                    maxLines: 1,
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                        fontSize: 10,
+                                        color: episodes[index].date != null
+                                            ? (episodes[index].date!.isAfter(DateTime.now()) ? ApplicationTheme.appColorBlue : null)
+                                            : null)),
+                                SizedBox(
+                                  width: 25,
+                                  height: 20,
+                                  child: IconButton(
+                                    padding: EdgeInsets.zero,
+                                      icon: Icon(episodes[index].seen ? Icons.check_box_rounded : Icons.check_box_outline_blank_rounded,
+                                          color: episodes[index].date != null
+                                              ? (episodes[index].date!.isAfter(DateTime.now()) ? ApplicationTheme.appColorBlue : ApplicationTheme.appColorLighterGrey)
+                                              :  ApplicationTheme.appColorLighterGrey),
+                                      onPressed: () async {
+                                        await _client.markEpisode(episodes[index]);
+                                        refresh();
+                                      }),
+                                )
+                              ],
+                            ),
+                          ),
+                        ))));
           }
           return Container();
         });

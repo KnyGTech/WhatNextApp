@@ -67,9 +67,10 @@ class _EpisodesViewState extends State<EpisodesView> {
                           style: Theme.of(context).textTheme.titleLarge),
                     ]),
                 trailing: IconButton(
-                    icon: Icon(_episodes[index].seen
-                        ? Icons.check_box_rounded
-                        : Icons.square_outlined, color: ApplicationTheme.appColorLighterGrey),
+                    icon: Icon(_episodes[index].seen ? Icons.check_box_rounded : Icons.check_box_outline_blank_rounded,
+                        color: _episodes[index].date != null
+                            ? (_episodes[index].date!.isAfter(DateTime.now()) ? ApplicationTheme.appColorBlue : ApplicationTheme.appColorLighterGrey)
+                            :  ApplicationTheme.appColorLighterGrey),
                     onPressed: () async {
                       await _client.markEpisode(_episodes[index]);
                       setState(() {

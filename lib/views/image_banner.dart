@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 
+import '../application/application_theme.dart';
+
 class ImageBanner extends StatelessWidget {
   final String path;
+  final double? size;
 
-  const ImageBanner(this.path, {Key? key}) : super(key: key);
+  const ImageBanner(this.path, {Key? key, this.size}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Image.network(path,
-        width: 130,
+        width: size ?? 130,
         loadingBuilder: ((context, child, loadingProgress) =>
             loadingProgress == null
                 ? child

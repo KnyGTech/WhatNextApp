@@ -22,6 +22,16 @@ class ApplicationTheme {
     ApplicationTheme.tabColorBlue
   ];
 
+  static Map<String, int> breakpoints = {
+    'sm' : 300,
+    'md' : 400,
+    'lg' : 700,
+  };
+
+  static bool isSmallDevice(BuildContext context) => MediaQuery.of(context).size.width >= breakpoints['sm']!;
+  static bool isMediumDevice(BuildContext context) => MediaQuery.of(context).size.width >= breakpoints['md']!;
+  static bool isLargeDevice(BuildContext context) => MediaQuery.of(context).size.width >= breakpoints['lg']!;
+
   static TextStyle errorTextTheme =
       const TextStyle(fontSize: 14, color: Colors.red);
 
