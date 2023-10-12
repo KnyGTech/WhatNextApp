@@ -6,8 +6,9 @@
 name: Build APK
 
 on:
-  create:
+  push:
     tags:
+      - '*'
 
 jobs:
   build:
