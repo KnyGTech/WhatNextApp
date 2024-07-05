@@ -8,12 +8,17 @@ This app is the phone app of the popular series tracking website WhatNext ([http
 
 ## Screenshots
 
+### Mobile
+
 <div>
   <img src="docs/screenshots/Screenshot_1.png" alt="screenshot1" width="200"/>
   <img src="docs/screenshots/Screenshot_2.png" alt="screenshot2" width="200"/>
   <img src="docs/screenshots/Screenshot_3.png" alt="screenshot3" width="200"/>
   <img src="docs/screenshots/Screenshot_4.png" alt="screenshot4" width="200"/>
 </div>
+
+### Tablet
+
 <div>
   <img src="docs/screenshots/Screenshot_5.png" alt="screenshot5" width="600"/>
 </div>
