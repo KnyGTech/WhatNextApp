@@ -2,7 +2,7 @@
 
 Follow your favorite series on your mobile!
 
-This app is the phone app of the popular series tracking website WhatNext.
+This app is the phone app of the popular series tracking website WhatNext ([https://whatnext.cc](https://whatnext.cc)).
 
 <a target="_blank" href="https://play.google.com/store/apps/details?id=hu.knyigtech.whatnext"><img src="https://raw.githubusercontent.com/steverichey/google-play-badge-svg/master/img/en_get.svg" alt="playstore" width="200"/></a>
 
