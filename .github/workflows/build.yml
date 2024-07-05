@@ -22,13 +22,13 @@ jobs:
           java-version: '11'
       - uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.10.5'
+          flutter-version: '3.22.2'
       - name: Determine version
         id: get_version
         run: |
           echo VERSION_NAME=${GITHUB_REF/refs\/tags\//} >> $GITHUB_OUTPUT
           echo VERSION_CODE=${{ github.run_number }} >> $GITHUB_OUTPUT
-      - name: Export secrets
+      - name: Export android secrets
         run: |
           echo $KEY | base64 -i -d > android/key.jks
           echo storePassword=$STORE_PASSWORD > android/key.properties
@@ -40,16 +40,30 @@ jobs:
           STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+      - name: Export windows secrets
+        run: |
+          echo $WINDOWS_KEY | base64 -i -d > windows/key.pfx
+          echo certificatePassword=$WINDOWS_PASSWORD > windows/key.properties
+          echo certificatePath=../key.pfx >> windows/key.properties
+        env:
+          WINDOWS_KEY: ${{ secrets.WINDOWS_KEY }}
+          WINDOWS_PASSWORD: ${{ secrets.WINDOWS_PASSWORD }}
+      - name: Get dependencies
+        run: flutter pub get
       - name: Build APK
         run: |
-          flutter pub get
           flutter build apk --release --build-name ${{ steps.get_version.outputs.VERSION_NAME }} --build-number ${{ steps.get_version.outputs.VERSION_CODE }}
           flutter build appbundle --release --build-name ${{ steps.get_version.outputs.VERSION_NAME }} --build-number ${{ steps.get_version.outputs.VERSION_CODE }}
           mv build/app/outputs/flutter-apk/app-release.apk build/app/outputs/flutter-apk/whatnext-${{ steps.get_version.outputs.VERSION_NAME }}.apk
           mv build/app/outputs/bundle/release/app-release.aab build/app/outputs/bundle/release/whatnext-${{ steps.get_version.outputs.VERSION_NAME }}.aab
-      - name: Upload APK
+      - name: Build MSIX
+        run: |
+          dart run msix:create --certificate-password "$(certificatePassword)" --certificate-path "$(certificatePath)" --version ${{ steps.get_version.outputs.VERSION_NAME }}
+          mv build/windows/x64/runner/Release/whatnext.msix build/windows/x64/runner/Release/whatnext-${{ steps.get_version.outputs.VERSION_NAME }}.msix
+      - name: Upload release
         uses: softprops/action-gh-release@v1
         with:
           files: |
             build/app/outputs/flutter-apk/whatnext-${{ steps.get_version.outputs.VERSION_NAME }}.apk
             build/app/outputs/bundle/release/whatnext-${{ steps.get_version.outputs.VERSION_NAME }}.aab
+            build/windows/x64/runner/Release/whatnext-${{ steps.get_version.outputs.VERSION_NAME }}.msix

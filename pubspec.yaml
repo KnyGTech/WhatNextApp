@@ -106,4 +106,3 @@ msix_config:
   msix_version: 1.0.0.0
   logo_path: "assets/images/icon.png"
   capabilities: internetClient
-  certificate_path: C:\Users\Knyihár Gábor\cert\knygtech.pfx
