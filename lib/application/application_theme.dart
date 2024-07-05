@@ -23,8 +23,8 @@ class ApplicationTheme {
   ];
 
   static Map<String, int> breakpoints = {
-    'sm' : 300,
-    'md' : 400,
+    'sm' : 250,
+    'md' : 375,
     'lg' : 700,
   };
 
@@ -40,14 +40,13 @@ class ApplicationTheme {
           backgroundColor: appColorDarkerGrey,
           foregroundColor: appColorLightGrey),
       indicatorColor: appColorBlue,
-      backgroundColor: appColorMediumGrey,
       scaffoldBackgroundColor: appColorMediumGrey,
       floatingActionButtonTheme: FloatingActionButtonThemeData(
           backgroundColor: appColorBlue, foregroundColor: appColorLighterGrey),
       cardColor: appColorDarkGrey,
       primaryColor: appColorLighterGrey,
       primaryTextTheme: TextTheme(
-        bodyText1: TextStyle(color: appColorLighterGrey),
+        bodyLarge: TextStyle(color: appColorLighterGrey),
       ),
       textTheme: TextTheme(
           titleLarge: TextStyle(
@@ -57,7 +56,7 @@ class ApplicationTheme {
       listTileTheme: ListTileThemeData(
         textColor: appColorLighterGrey,
       ),
-      colorScheme: ColorScheme.dark(primary: appColorBlue),
       progressIndicatorTheme: ProgressIndicatorThemeData(
-          refreshBackgroundColor: appColorLighterGrey, color: appColorBlue));
+          refreshBackgroundColor: appColorLighterGrey, color: appColorBlue),
+      colorScheme: ColorScheme.dark(primary: appColorBlue).copyWith(surface: appColorMediumGrey));
 }
