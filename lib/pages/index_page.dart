@@ -126,9 +126,6 @@ class _IndexPageState extends State<IndexPage> {
                         ],
                         bottom: TabBar(
                           indicatorColor: _indicatorColor,
-                          dividerColor: ApplicationTheme.appColorDarkerGrey,
-                          labelColor: ApplicationTheme.appColorLighterGrey,
-                          unselectedLabelColor: ApplicationTheme.appColorLightGrey,
                           isScrollable: true,
                           tabs: _groups
                               .map((e) =>
