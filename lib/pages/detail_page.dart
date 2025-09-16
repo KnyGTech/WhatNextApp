@@ -3,7 +3,7 @@ import 'package:get_it/get_it.dart';
 import 'package:whatnext/_lib.dart';
 
 class DetailPage extends StatefulWidget {
-  const DetailPage(this._showId, {Key? key}) : super(key: key);
+  const DetailPage(this._showId, {super.key});
 
   final int _showId;
 

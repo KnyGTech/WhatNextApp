@@ -4,7 +4,7 @@ import 'package:get_it/get_it.dart';
 import 'package:whatnext/_lib.dart';
 
 class IndexPage extends StatefulWidget {
-  const IndexPage({Key? key}) : super(key: key);
+  const IndexPage({super.key});
 
   @override
   State<IndexPage> createState() => _IndexPageState();
@@ -20,7 +20,7 @@ class _IndexPageState extends State<IndexPage> {
   void initState() {
     super.initState();
     GetIt.I.get<ShowsScrollingEvent>().subscribe((args) => setState(() {
-          _isFabVisible = args!.direction == ScrollDirection.forward;
+          _isFabVisible = args.direction == ScrollDirection.forward;
         }));
   }
 
@@ -57,7 +57,7 @@ class _IndexPageState extends State<IndexPage> {
                           IconButton(
                               onPressed: () async {
                                 final tabIndex =
-                                    DefaultTabController.of(context)!.index;
+                                    DefaultTabController.of(context).index;
                                 final GlobalKey<FormState> formKey =
                                     GlobalKey<FormState>();
                                 final newName = TextEditingController(
@@ -145,7 +145,7 @@ class _IndexPageState extends State<IndexPage> {
                           child: FloatingActionButton(
                             onPressed: () async {
                               final tabIndex =
-                                  DefaultTabController.of(context)?.index ?? 1;
+                                  DefaultTabController.of(context).index ?? 1;
                               var result = await showDialog(
                                   context: context,
                                   builder: (context) {

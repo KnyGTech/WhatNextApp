@@ -4,7 +4,7 @@ import 'dart:async';
 import 'package:whatnext/_lib.dart';
 
 class SearchPage extends StatefulWidget {
-  const SearchPage(this._groupId, {Key? key}) : super(key: key);
+  const SearchPage(this._groupId, {super.key});
   final int _groupId;
 
   @override
@@ -54,7 +54,7 @@ class _SearchPageState extends State<SearchPage> {
     );
   }
 
-  _onSearchChanged(String query) {
+  void _onSearchChanged(String query) {
     if (_debounce?.isActive ?? false) _debounce!.cancel();
     _debounce = Timer(const Duration(milliseconds: 500), () async {
       var result = await _client.search(query);

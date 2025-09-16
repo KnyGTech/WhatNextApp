@@ -6,7 +6,7 @@ import 'package:get_it/get_it.dart';
 import 'package:whatnext/_lib.dart';
 
 class Application extends StatelessWidget {
-  const Application({Key? key}) : super(key: key);
+  const Application({super.key});
 
   @override
   Widget build(BuildContext context) {

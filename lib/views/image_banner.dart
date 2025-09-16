@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 
-import '../application/application_theme.dart';
 
 class ImageBanner extends StatelessWidget {
   final String path;
   final double? size;
 
-  const ImageBanner(this.path, {Key? key, this.size}) : super(key: key);
+  const ImageBanner(this.path, {super.key, this.size});
 
   @override
   Widget build(BuildContext context) {

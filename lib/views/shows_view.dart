@@ -8,7 +8,7 @@ import 'package:whatnext/_lib.dart';
 class ShowView extends StatefulWidget {
   final int _groupId;
 
-  const ShowView(this._groupId, {Key? key}) : super(key: key);
+  const ShowView(this._groupId, {super.key});
 
   @override
   State<ShowView> createState() => _ShowViewState();
@@ -34,7 +34,8 @@ class _ShowViewState extends State<ShowView> {
           if (snapshot.data != null) {
             _shows.clear();
             _shows.addAll(snapshot.data ?? []);
-            return RefreshIndicator(onRefresh: refresh, child: renderListView());
+            return RefreshIndicator(
+                onRefresh: refresh, child: renderListView());
           } else {
             return const Center(
               child: RefreshProgressIndicator(),
@@ -49,7 +50,9 @@ class _ShowViewState extends State<ShowView> {
     controller.addListener(() {
       var currentDirection = controller.position.userScrollDirection;
       if (_previousDirection != currentDirection) {
-        GetIt.I.get<ShowsScrollingEvent>().broadcast(ShowsScrollingEventArgs(currentDirection));
+        GetIt.I
+            .get<ShowsScrollingEvent>()
+            .broadcast(ShowsScrollingEventArgs(currentDirection));
         _previousDirection = currentDirection;
       }
     });
@@ -64,16 +67,26 @@ class _ShowViewState extends State<ShowView> {
         itemBuilder: (context, i) => listViewItemBuilder(context, _shows[i]));
   }
 
-  Widget getProxyDecorator(Widget child, int index, Animation<double> animation) {
+  Widget getProxyDecorator(
+      Widget child, int index, Animation<double> animation) {
     if (Platform.isAndroid) {
-      var card = (((child as ReorderableDelayedDragStartListener).child as MergeSemantics).child as Semantics).child as Card;
-      return Card(
-        elevation: 3,
-        margin: const EdgeInsets.all(5.0),
-        color: ApplicationTheme.appColorBlue,
-        clipBehavior: Clip.antiAlias,
-        child: card.child,
-      );
+      try {
+        var card =
+            ((child as Semantics).child as ReorderableDelayedDragStartListener)
+                .child as Card;
+        return Card(
+          elevation: 3,
+          margin: const EdgeInsets.all(5.0),
+          color: ApplicationTheme.appColorBlue,
+          clipBehavior: Clip.antiAlias,
+          child: Container(
+            decoration: BoxDecoration(color: ApplicationTheme.appColorBlue),
+            child: card.child,
+          ),
+        );
+      } catch (e) {
+        // If the tree changes, it may throw an error.
+      }
     }
     return Container(
       decoration: BoxDecoration(
@@ -114,49 +127,62 @@ class _ShowViewState extends State<ShowView> {
               child: ListTile(
                   dense: true,
                   leading: ImageBanner(show.banner),
-                  title: Text(show.name, style: Theme.of(context).textTheme.titleLarge),
-                  subtitle: Text('Évad: ${show.seasonActual}/${show.seasonAll}'),
+                  title: Text(show.name,
+                      style: Theme.of(context).textTheme.titleLarge),
+                  subtitle:
+                      Text('Évad: ${show.seasonActual}/${show.seasonAll}'),
                   onTap: () => navigateToDetails(show.id),
                   trailing: Row(
                       mainAxisSize: MainAxisSize.min,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [getShowIndicator(context, show), getListTilePopupActions(context, show)]))),
+                      children: [
+                        getShowIndicator(context, show),
+                        getListTilePopupActions(context, show)
+                      ]))),
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
             mainAxisSize: MainAxisSize.min,
             children: [
               Container(
                   margin: const EdgeInsets.only(right: 10),
-                  decoration:
-                      BoxDecoration(border: Border.all(width: 1, color: Colors.white38), borderRadius: const BorderRadius.all(Radius.circular(3))),
+                  decoration: BoxDecoration(
+                      border: Border.all(width: 1, color: Colors.white38),
+                      borderRadius: const BorderRadius.all(Radius.circular(3))),
                   width: 25,
                   height: 25,
                   child: IconButton(
                       onPressed: show.seasonActual > 1
                           ? () async {
-                              await _client.getEpisodes(show.id, show.seasonActual - 1, force: true);
+                              await _client.getEpisodes(
+                                  show.id, show.seasonActual - 1,
+                                  force: true);
                               refresh();
                             }
                           : null,
                       icon: const Icon(Icons.keyboard_arrow_up),
-                      constraints: const BoxConstraints(maxWidth: 25, maxHeight: 25),
+                      constraints:
+                          const BoxConstraints(maxWidth: 25, maxHeight: 25),
                       padding: EdgeInsets.zero)),
               const SizedBox(height: 5),
               Container(
                   margin: const EdgeInsets.only(right: 10),
-                  decoration:
-                      BoxDecoration(border: Border.all(width: 1, color: Colors.white38), borderRadius: const BorderRadius.all(Radius.circular(3))),
+                  decoration: BoxDecoration(
+                      border: Border.all(width: 1, color: Colors.white38),
+                      borderRadius: const BorderRadius.all(Radius.circular(3))),
                   width: 25,
                   height: 25,
                   child: IconButton(
                       onPressed: show.seasonActual < show.seasonAll
                           ? () async {
-                              await _client.getEpisodes(show.id, show.seasonActual + 1, force: true);
+                              await _client.getEpisodes(
+                                  show.id, show.seasonActual + 1,
+                                  force: true);
                               refresh();
                             }
                           : null,
                       icon: const Icon(Icons.keyboard_arrow_down),
-                      constraints: const BoxConstraints(maxWidth: 25, maxHeight: 25),
+                      constraints:
+                          const BoxConstraints(maxWidth: 25, maxHeight: 25),
                       padding: EdgeInsets.zero))
             ],
           ),
@@ -166,15 +192,20 @@ class _ShowViewState extends State<ShowView> {
     }
     return ListTile(
         dense: true,
-        leading:
-            ApplicationTheme.isSmallDevice(context) ? ImageBanner(show.banner, size: ApplicationTheme.isMediumDevice(context) ? null : 65) : null,
+        leading: ApplicationTheme.isSmallDevice(context)
+            ? ImageBanner(show.banner,
+                size: ApplicationTheme.isMediumDevice(context) ? null : 65)
+            : null,
         title: Text(show.name, style: Theme.of(context).textTheme.titleLarge),
         subtitle: Text('Évad: ${show.seasonActual}/${show.seasonAll}'),
         onTap: () => navigateToDetails(show.id),
         trailing: Row(
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [getShowIndicator(context, show), getListTilePopupActions(context, show)]));
+            children: [
+              getShowIndicator(context, show),
+              getListTilePopupActions(context, show)
+            ]));
   }
 
   Widget getShowIndicator(BuildContext context, Show show) {
@@ -195,7 +226,9 @@ class _ShowViewState extends State<ShowView> {
 
             return Expanded(
                 child: Container(
-                    margin: Platform.isAndroid ? const EdgeInsets.fromLTRB(0, 5, 10, 5) : const EdgeInsets.fromLTRB(0, 5, 35, 5),
+                    margin: Platform.isAndroid
+                        ? const EdgeInsets.fromLTRB(0, 5, 10, 5)
+                        : const EdgeInsets.fromLTRB(0, 5, 35, 5),
                     constraints: const BoxConstraints(maxHeight: 55),
                     child: Scrollbar(
                         thickness: Platform.isAndroid ? 0 : null,
@@ -208,36 +241,60 @@ class _ShowViewState extends State<ShowView> {
                           clipBehavior: Clip.antiAlias,
                           itemBuilder: (context, index) => Container(
                             decoration: BoxDecoration(
-                                borderRadius: const BorderRadius.all(Radius.circular(3)),
-                                border: Border.all(color: ApplicationTheme.appColorLightGrey, width: 1)),
+                                borderRadius:
+                                    const BorderRadius.all(Radius.circular(3)),
+                                border: Border.all(
+                                    color: ApplicationTheme.appColorLightGrey,
+                                    width: 1)),
                             margin: const EdgeInsets.only(right: 3),
                             child: Column(
                               mainAxisSize: MainAxisSize.min,
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Text('S${episodes[index].season.toString().padLeft(2, '0')}',
+                                Text(
+                                    'S${episodes[index].season.toString().padLeft(2, '0')}',
                                     maxLines: 1,
                                     textAlign: TextAlign.center,
-                                    style: TextStyle(fontSize: 10, color: ApplicationTheme.appColorLightGrey)),
-                                Text('E${episodes[index].episode.toString().padLeft(2, '0')}',
+                                    style: TextStyle(
+                                        fontSize: 10,
+                                        color: ApplicationTheme
+                                            .appColorLightGrey)),
+                                Text(
+                                    'E${episodes[index].episode.toString().padLeft(2, '0')}',
                                     maxLines: 1,
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
                                         fontSize: 10,
                                         color: episodes[index].date != null
-                                            ? (episodes[index].date!.isAfter(DateTime.now()) ? ApplicationTheme.appColorBlue : null)
+                                            ? (episodes[index]
+                                                    .date!
+                                                    .isAfter(DateTime.now())
+                                                ? ApplicationTheme.appColorBlue
+                                                : null)
                                             : null)),
                                 SizedBox(
                                   width: 25,
                                   height: 20,
                                   child: IconButton(
-                                    padding: EdgeInsets.zero,
-                                      icon: Icon(episodes[index].seen ? Icons.check_box_rounded : Icons.check_box_outline_blank_rounded,
+                                      padding: EdgeInsets.zero,
+                                      icon: Icon(
+                                          episodes[index].seen
+                                              ? Icons.check_box_rounded
+                                              : Icons
+                                                  .check_box_outline_blank_rounded,
                                           color: episodes[index].date != null
-                                              ? (episodes[index].date!.isAfter(DateTime.now()) ? ApplicationTheme.appColorBlue : ApplicationTheme.appColorLighterGrey)
-                                              :  ApplicationTheme.appColorLighterGrey),
+                                              ? (episodes[index]
+                                                      .date!
+                                                      .isAfter(DateTime.now())
+                                                  ? ApplicationTheme
+                                                      .appColorBlue
+                                                  : ApplicationTheme
+                                                      .appColorLighterGrey)
+                                              : ApplicationTheme
+                                                  .appColorLighterGrey),
                                       onPressed: () async {
-                                        await _client.markEpisode(episodes[index]);
+                                        await _client
+                                            .markEpisode(episodes[index]);
                                         refresh();
                                       }),
                                 )
@@ -252,8 +309,10 @@ class _ShowViewState extends State<ShowView> {
 
   Widget getListTilePopupActions(BuildContext context, Show show) {
     return PopupMenuButton(
-        icon: Icon(Icons.more_vert, color: ApplicationTheme.appColorLighterGrey),
-        itemBuilder: (context) => [getDeleteAction(context, show), getMoveAction(context, show)]);
+        icon:
+            Icon(Icons.more_vert, color: ApplicationTheme.appColorLighterGrey),
+        itemBuilder: (context) =>
+            [getDeleteAction(context, show), getMoveAction(context, show)]);
   }
 
   PopupMenuEntry getDeleteAction(BuildContext context, Show show) {
@@ -270,7 +329,8 @@ class _ShowViewState extends State<ShowView> {
     return PopupMenuItem(
       child: Text('Áthelyezés', style: Theme.of(context).textTheme.titleLarge),
       onTap: () async {
-        var groups = (await _client.getGroups()).where((Group group) => group.index != widget._groupId);
+        var groups = (await _client.getGroups())
+            .where((Group group) => group.index != widget._groupId);
 
         WidgetsBinding.instance.addPostFrameCallback((_) async {
           var result = await showDialog(
@@ -279,7 +339,8 @@ class _ShowViewState extends State<ShowView> {
                     title: const Text("Áthelyezés másik lapra"),
                     children: groups
                         .map((group) => SimpleDialogOption(
-                              padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 24.0),
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 16.0, horizontal: 24.0),
                               onPressed: () {
                                 Navigator.pop(context, group.index);
                               },
@@ -287,7 +348,9 @@ class _ShowViewState extends State<ShowView> {
                                   style: Theme.of(context)
                                       .textTheme
                                       .titleLarge!
-                                      .copyWith(color: ApplicationTheme.appColorBlue, fontWeight: FontWeight.normal)),
+                                      .copyWith(
+                                          color: ApplicationTheme.appColorBlue,
+                                          fontWeight: FontWeight.normal)),
                             ))
                         .toList(),
                   ));
@@ -307,7 +370,8 @@ class _ShowViewState extends State<ShowView> {
   }
 
   void navigateToDetails(int showId) {
-    Navigator.of(context).push(MaterialPageRoute(builder: (context) => DetailPage(showId)));
+    Navigator.of(context)
+        .push(MaterialPageRoute(builder: (context) => DetailPage(showId)));
   }
 
   void handleNewShowAddedEvent(NewShowAddedEventArgs? args) {

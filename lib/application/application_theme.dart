@@ -36,15 +36,15 @@ class ApplicationTheme {
       const TextStyle(fontSize: 14, color: Colors.red);
 
   static ThemeData primaryTheme = ThemeData(
+      useMaterial3: true,
       appBarTheme: AppBarTheme(
           backgroundColor: appColorDarkerGrey,
           foregroundColor: appColorLightGrey),
-      indicatorColor: appColorBlue,
       scaffoldBackgroundColor: appColorMediumGrey,
       floatingActionButtonTheme: FloatingActionButtonThemeData(
           backgroundColor: appColorBlue, foregroundColor: appColorLighterGrey),
       cardColor: appColorDarkGrey,
-      cardTheme: CardTheme( color: appColorDarkGrey),
+      cardTheme: CardThemeData(color: appColorDarkGrey, surfaceTintColor: Colors.transparent),
       primaryColor: appColorLighterGrey,
       primaryTextTheme: TextTheme(
         bodyLarge: TextStyle(color: appColorLighterGrey),
@@ -68,7 +68,7 @@ class ApplicationTheme {
           primary: appColorLighterGrey,
           onSurfaceVariant: appColorLightGrey
       ),
-      tabBarTheme: TabBarTheme(
+      tabBarTheme: TabBarThemeData(
           unselectedLabelColor: appColorLightGrey,
           labelColor: appColorLighterGrey,
           dividerColor: appColorDarkerGrey,

@@ -7,7 +7,7 @@ class EpisodesView extends StatefulWidget {
   final int _showId;
   final int _season;
 
-  const EpisodesView(this._showId, this._season, {Key? key}) : super(key: key);
+  const EpisodesView(this._showId, this._season, {super.key});
 
   @override
   State<EpisodesView> createState() => _EpisodesViewState();

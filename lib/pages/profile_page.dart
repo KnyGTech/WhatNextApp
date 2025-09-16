@@ -3,7 +3,7 @@ import 'package:get_it/get_it.dart';
 import 'package:whatnext/_lib.dart';
 
 class ProfilePage extends StatefulWidget {
-  const ProfilePage({Key? key}) : super(key: key);
+  const ProfilePage({super.key});
 
   @override
   State<ProfilePage> createState() => _ProfilePageState();
@@ -46,6 +46,8 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget _renderProfileCard() {
     if (ApplicationTheme.isMediumDevice(context)) {
       return Card(
+        color: ApplicationTheme.appColorDarkGrey,
+        surfaceTintColor: Colors.transparent,
         child: ListTile(
           leading: _profile?.avatar != null
               ? Image.network(_profile!.avatar,
@@ -61,6 +63,8 @@ class _ProfilePageState extends State<ProfilePage> {
     }
 
     return Card(
+      color: ApplicationTheme.appColorDarkGrey,
+      surfaceTintColor: Colors.transparent,
       child: Column(children: [
         ListTile(
           leading: _profile?.avatar != null
@@ -82,6 +86,8 @@ class _ProfilePageState extends State<ProfilePage> {
     var crossAxisCount = (MediaQuery.of(context).size.width / 130).round();
 
     return Card(
+      color: ApplicationTheme.appColorDarkGrey,
+      surfaceTintColor: Colors.transparent,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -111,6 +117,8 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Widget _renderActivityCard() {
     return Card(
+      color: ApplicationTheme.appColorDarkGrey,
+      surfaceTintColor: Colors.transparent,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,

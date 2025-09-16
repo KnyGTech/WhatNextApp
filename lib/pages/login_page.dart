@@ -5,7 +5,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:whatnext/_lib.dart';
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({Key? key}) : super(key: key);
+  const LoginPage({super.key});
 
   @override
   State<LoginPage> createState() => _LoginPageState();
